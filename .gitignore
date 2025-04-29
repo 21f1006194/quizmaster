@@ -1,0 +1,66 @@
+# Python-related
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.log
+*.sqlite3
+*.db
+instance/
+
+# Virtual environments
+.venv/
+env/
+ENV/
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Flask-related
+*.env
+*.flaskenv
+instance/
+
+# Node.js-related
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vue.js-related
+dist/
+public/assets/
+*.local
+*.bak
+*.swp
+.DS_Store
+.vscode/
+.idea/
+*.iml
+
+# Logs and temporary files
+*.log
+*.out
+*.tmp
+*.lock
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.iml
+*.sublime-*
+*.swp
+*~ 
+*.bak
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Static uploaded files
+backend/static/uploads
