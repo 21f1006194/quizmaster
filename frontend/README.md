@@ -1,0 +1,2 @@
+# Quiz Master App
+This is a simple quiz master app that allows users to create quizzes and take quizzes created by other users. The app is built using React and Redux for the frontend and Node.js and Express for the backend. The app uses a PostgreSQL database to store quiz data.
