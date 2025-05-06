@@ -13,6 +13,8 @@ class User(db.Model, UserMixin):
     date_of_birth = db.Column(db.Date)
     is_admin = db.Column(db.Boolean, default=False)
 
+    quiz_attempts = db.relationship("QuizAttempt", backref="user", lazy=True)
+
     def __init__(
         self,
         username,

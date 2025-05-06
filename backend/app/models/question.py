@@ -6,3 +6,6 @@ class Question(db.Model):
     quiz_id = db.Column(db.Integer, db.ForeignKey("quiz.id"), nullable=False)
     question = db.Column(db.Text, nullable=False)
     marks = db.Column(db.Integer, nullable=False, default=1)
+
+    options = db.relationship("Option", backref="question", lazy=True)
+    responses = db.relationship("UserResponse", backref="question", lazy=True)

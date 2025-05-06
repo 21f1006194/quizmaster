@@ -7,3 +7,6 @@ class Quiz(db.Model):
     quiz_date = db.Column(db.DateTime, nullable=False)
     time_duration = db.Column(db.Integer, nullable=False)
     remarks = db.Column(db.Text)
+
+    questions = db.relationship("Question", backref="quiz", lazy=True)
+    attempts = db.relationship("QuizAttempt", backref="quiz", lazy=True)

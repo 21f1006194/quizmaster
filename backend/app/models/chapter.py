@@ -6,3 +6,5 @@ class Chapter(db.Model):
     subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
+
+    quizzes = db.relationship("Quiz", backref="chapter", lazy=True)

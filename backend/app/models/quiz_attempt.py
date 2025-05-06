@@ -9,3 +9,5 @@ class QuizAttempt(db.Model):
     score = db.Column(db.Integer, nullable=False, default=0)
     remarks = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    responses = db.relationship("UserResponse", backref="attempt", lazy=True)
