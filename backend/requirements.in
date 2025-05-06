@@ -9,3 +9,5 @@ Flask-Restful
 requests
 celery
 redis
+email-validator
+
