@@ -9,9 +9,18 @@ def create_admin():
         db.create_all()
         from app.models import User
 
+        admin_username = "admin"
+        admin_password = "admin123"
+        admin_email = "admin@quizmaster.com"
+        admin_full_name = "Quiz Admin"
         if not User.query.filter_by(username="admin").first():
-            admin = User(username="admin", is_admin=True)
-            admin.set_password("admin123")
+            admin = User(
+                username=admin_username,
+                password=admin_password,
+                email=admin_email,
+                full_name=admin_full_name,
+                is_admin=True,
+            )
             db.session.add(admin)
             db.session.commit()
             print("Admin user created: admin/admin123")
