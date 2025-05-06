@@ -1,6 +1,10 @@
 from app import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+import re
+from email_validator import validate_email, EmailNotValidError
+from sqlalchemy.orm import validates
 
 
 class User(db.Model, UserMixin):
@@ -34,7 +38,31 @@ class User(db.Model, UserMixin):
         self.set_password(password)
 
     def set_password(self, password):
+        if len(password) < 8:
+            raise ValueError("Password must be at least 8 characters long.")
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    @validates("date_of_birth")
+    def validate_date_of_birth(self, key, date_of_birth):
+        """Ensure DOB is before the current year."""
+        current_year = datetime.now().year
+        if date_of_birth.year >= current_year:
+            raise ValueError("Date of birth must be before this year.")
+
+    @validates("username")
+    def validate_username(self, key, username):
+        """Allow only letters, numbers, and underscores."""
+        if bool(re.match(r"^\w{3,50}$", username)):
+            return username
+        raise ValueError(
+            "Invalid username. Only letters, numbers, and underscores are allowed."
+        )
+
+    @validates("email")
+    def validate_email(self, key, email):
+        """Validate email format using email_validator."""
+        validate_email(email, check_deliverability=False)
+        return email
