@@ -1,0 +1,82 @@
+@startuml
+!define PRIMARY_KEY(x) <b>x</b>
+!define FOREIGN_KEY(x) <u>x</u>
+
+entity Users {
+    PRIMARY_KEY(id) INT
+    username VARCHAR(255) UNIQUE NOT NULL
+    password_hash VARCHAR(255) NOT NULL
+    email VARCHAR(255) UNIQUE NOT NULL
+    full_name VARCHAR(255) NOT NULL
+    qualification VARCHAR(255)
+    date_of_birth DATE
+    is_admin BOOLEAN DEFAULT FALSE
+}
+
+entity Subjects {
+    PRIMARY_KEY(id) INT
+    name VARCHAR(255) UNIQUE NOT NULL
+    description TEXT
+}
+
+entity Chapters {
+    PRIMARY_KEY(id) INT
+    FOREIGN_KEY(subject_id) INT
+    name VARCHAR(255) NOT NULL
+    description TEXT
+}
+
+entity Quizzes {
+    PRIMARY_KEY(id) INT
+    FOREIGN_KEY(chapter_id) INT
+    quiz_date TIMESTAMP NOT NULL
+    time_duration INT NOT NULL
+    remarks TEXT
+}
+
+entity Questions {
+    PRIMARY_KEY(id) INT
+    FOREIGN_KEY(quiz_id) INT
+    question TEXT NOT NULL
+    max_marks FLOAT NOT NULL DEFAULT 1.0
+}
+
+entity Options {
+    PRIMARY_KEY(id) INT
+    FOREIGN_KEY(question_id) INT
+    option_text TEXT NOT NULL
+    is_correct BOOLEAN DEFAULT FALSE
+}
+
+
+entity Quiz_Attempts {
+    PRIMARY_KEY(id) INT
+    FOREIGN_KEY(user_id) INT
+    FOREIGN_KEY(quiz_id) INT
+    score FLOAT NOT NULL DEFAULT 0
+    remarks TEXT
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+}
+
+entity User_Responses {
+    PRIMARY_KEY(id) INT
+    FOREIGN_KEY(attempt_id) INT
+    FOREIGN_KEY(question_id) INT
+    FOREIGN_KEY(option_id) INT  -- User-selected option nullable if not attempted
+    is_attempted BOOLEAN DEFAULT FALSE
+}
+
+
+ 
+
+' Relationships
+Users ||--o{ Quiz_Attempts : "takes"
+Quiz_Attempts ||--o{  User_Responses : "contains"
+Subjects ||--o{ Chapters : "has"
+Chapters ||--o{ Quizzes : "has"
+Quizzes ||--o{ Questions : "contains"
+Questions ||--o{ Options : "has"
+User_Responses ||--o{ Questions : "answers"
+
+
+@enduml
