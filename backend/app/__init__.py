@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from flask_login import LoginManager
 from app.config import Config
-
+from flask_cors import CORS
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -18,6 +18,7 @@ def create_app(config_class=Config):
     print("Creating app####")
     app = Flask(__name__)
     app.config.from_object(config_class)
+    CORS(app, supports_credentials=True)
 
     # Initialize extensions with the app context
     db.init_app(app)
