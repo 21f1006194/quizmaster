@@ -49,8 +49,9 @@ class User(db.Model, UserMixin):
     def validate_date_of_birth(self, key, date_of_birth):
         """Ensure DOB is before the current year."""
         current_year = datetime.now().year
-        if date_of_birth.year >= current_year:
+        if date_of_birth and date_of_birth.year >= current_year:
             raise ValueError("Date of birth must be before this year.")
+        return date_of_birth
 
     @validates("username")
     def validate_username(self, key, username):

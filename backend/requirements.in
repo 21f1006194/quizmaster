@@ -10,4 +10,4 @@ requests
 celery
 redis
 email-validator
-
+flask-cors
