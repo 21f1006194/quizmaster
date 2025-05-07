@@ -34,7 +34,8 @@
           <button type="submit" class="btn btn-primary">Login</button>
         </div>
         <p class="text-center mt-3 mb-0">
-          Don't have an account? <a href="#" class="text-decoration-none">Sign Up</a>
+          Don't have an account? 
+          <router-link to="/register" class="text-decoration-none">Sign Up</router-link>
         </p>
       </form>
     </div>
