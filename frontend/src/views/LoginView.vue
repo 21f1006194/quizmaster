@@ -1,27 +1,16 @@
-<script setup>
-
-</script>
-
 <template>
 
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card p-4 shadow-lg" style="width: 400px;">
       <h3 class="text-center mb-4">Login</h3>
-      <form>
+      <form @submit.prevent="loginUser">
         <div class="mb-3">
-          <label for="username" class="form-label">Username</label>
-          <input type="text" class="form-control" id="username" placeholder="Enter your username">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" v-model="authData.username">
         </div>
         <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input type="password" class="form-control" id="password" placeholder="Enter your password">
-        </div>
-        <div class="mb-3">
-          <label for="role" class="form-label">Role</label>
-          <select class="form-select" id="role" aria-label="Select your role">
-            <option value="user" selected>User</option>
-            <option value="admin">Admin</option>
-          </select>
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" v-model="authData.password">
         </div>
         <div class="d-flex justify-content-between align-items-center">
           <div class="form-check">
@@ -42,3 +31,33 @@
   </div>
 
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
+import { reactive } from 'vue';
+import api from '@/api'
+
+const authData = reactive({
+  username: '',
+  password: ''
+})
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const loginUser = async ()=>{
+  try{
+    const response = await api.post('/api/login', authData);
+    alert('Login successful');
+    const token = response.data.access_token;
+    const role = response.data.role;
+    
+    authStore.login(token, role);
+    router.push(role === 'admin' ? '/admin/dashboard' : '/user/dashboard');
+  }catch(error){
+    alert('Login Failed!!');
+    console.log(error);
+  }
+}
+</script>

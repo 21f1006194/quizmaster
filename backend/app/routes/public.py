@@ -1,6 +1,6 @@
 from flask_restful import Api, Resource
-from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt, create_access_token
+from flask import Blueprint, request
+from flask_jwt_extended import create_access_token, jwt_required
 from flask_login import login_user
 from sqlalchemy import or_
 from app import db
@@ -17,7 +17,7 @@ class Login(Resource):
         try:
             data = request.json
             if not data:
-                return jsonify({"msg": "Missing or invalid JSON payload"}), 400
+                return {"msg": "Missing or invalid JSON payload"}, 400
 
             username = data.get("username")
             password = data.get("password")
@@ -28,8 +28,8 @@ class Login(Resource):
                     identity=username,
                     additional_claims={"is_admin": bool(user.is_admin)},
                 )
-                login_user(user)  # Optional with Flask-Login
-                return {"access_token": token}, 200
+                role = "admin" if user.is_admin else "user"
+                return {"access_token": token, "role": role}, 200
 
             return {"msg": "Bad username or password"}, 401
         except Exception as e:
@@ -42,7 +42,7 @@ class Register(Resource):
         try:
             data = request.json
             if not data:
-                return jsonify({"msg": "Missing or invalid JSON payload"}), 400
+                return {"msg": "Missing or invalid JSON payload"}, 400
 
             username = data.get("username")
             password = data.get("password")
