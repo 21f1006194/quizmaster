@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
@@ -14,9 +15,11 @@ jwt_manager = JWTManager()
 
 
 def create_app(config_class=Config):
-    # Create and configure the Flask application
-    print("Creating app####")
-    app = Flask(__name__)
+    # Get the absolute path to the backend folder (one level up from app)
+    backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    static_folder = os.path.join(backend_dir, "static")
+
+    app = Flask(__name__, static_folder=static_folder, static_url_path="/static")
     app.config.from_object(config_class)
     CORS(app, supports_credentials=True)
 
@@ -40,11 +43,12 @@ def create_app(config_class=Config):
             "User": User,
         }
 
-    from app.routes import public_api_bp, admin_bp, user_bp
+    from app.routes import public_api_bp, admin_bp, user_bp, upload_bp
 
     app.register_blueprint(public_api_bp, url_prefix="/api")
     app.register_blueprint(admin_bp, url_prefix="/admin/api")
     app.register_blueprint(user_bp, url_prefix="/user/api")
+    app.register_blueprint(upload_bp, url_prefix="/upload/api")
 
     @app.errorhandler(500)
     def internal_error(error):

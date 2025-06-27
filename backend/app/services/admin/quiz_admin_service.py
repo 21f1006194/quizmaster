@@ -20,6 +20,7 @@ def update_quiz(quiz_id, data):
     if not quiz:
         return None
 
+    quiz.title = data.get("title", quiz.title)
     quiz.quiz_date = data.get("quiz_date", quiz.quiz_date)
     quiz.time_duration = data.get("time_duration", quiz.time_duration)
     quiz.remarks = data.get("remarks", quiz.remarks)
