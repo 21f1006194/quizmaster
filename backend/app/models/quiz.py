@@ -5,6 +5,7 @@ from sqlalchemy.orm import validates
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False, unique=False)
     chapter_id = db.Column(db.Integer, db.ForeignKey("chapter.id"), nullable=False)
     quiz_date = db.Column(db.DateTime, nullable=False)
     time_duration = db.Column(db.Integer, nullable=False)

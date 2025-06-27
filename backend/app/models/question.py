@@ -12,7 +12,7 @@ class Question(db.Model):
     responses = db.relationship("UserResponse", backref="question", lazy=True)
 
     @validates("max_marks")
-    def validate_max_marks(max_marks):
+    def validate_max_marks(self, key, max_marks):
         if max_marks <= 0:
             raise ValueError("Marks should be greater than 0")
         return max_marks

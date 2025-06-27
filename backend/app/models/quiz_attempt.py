@@ -11,3 +11,7 @@ class QuizAttempt(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     responses = db.relationship("UserResponse", backref="attempt", lazy=True)
+
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "quiz_id", name="unique_user_quiz_attempt"),
+    )
