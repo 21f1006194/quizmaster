@@ -53,7 +53,7 @@ const loginUser = async ()=>{
     const role = response.data.role;
     
     authStore.login(token, role);
-    router.push(role === 'admin' ? '/admin/dashboard' : '/user/dashboard');
+    router.push(role === 'admin' ? '/admin/home' : '/user/home');
   }catch(error){
     alert('Login Failed!!');
     console.log(error);

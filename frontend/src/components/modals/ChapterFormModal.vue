@@ -18,6 +18,7 @@ const chapterForm = ref({
 });
 
 // Watch both show and chapter props
+// Using watch is not strictly necessary here, but I'm using it since it's a good practice.
 watch(
   [() => props.show, () => props.chapter],
   ([newShow, newChapter]) => {

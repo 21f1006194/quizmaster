@@ -4,6 +4,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import AdminDashboard from '@/views/AdminDashboard.vue'
 import UserDashboard from '@/views/UserDashboard.vue'
+import AdminQuiz from '@/views/AdminQuiz.vue'
 import { useAuthStore } from '@/stores/authStore'
 
 const router = createRouter({
@@ -33,17 +34,24 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
-      path: '/admin/dashboard',
+      path: '/admin/home',
       name: 'adminDashboard',
       component: AdminDashboard,
       meta: { requiresAuth: true, role: 'admin' },
     },
     {
+      path: '/admin/quiz',
+      name: 'adminQuiz',
+      component: AdminQuiz,
+      meta: { requiresAuth: true, role: 'admin' },
+    },
+
+    {
       path: '/user/dashboard',
       name: 'userDashboard',
       component: UserDashboard,
       meta: { requiresAuth: true, role: 'user' },
-    }
+    },
   ],
 })
 

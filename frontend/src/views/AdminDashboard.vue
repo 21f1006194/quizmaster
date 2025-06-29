@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import api from '@/api';
+import { fetchCatalogData } from '@/utils/catalogData';
 import SubjectFormModal from '@/components/modals/SubjectFormModal.vue';
 import ChapterFormModal from '@/components/modals/ChapterFormModal.vue';
 
@@ -14,12 +14,12 @@ const selectedSubject = ref(null);
 const isEditingSubject = ref(false);
 const isEditingChapter = ref(false);
 
-const fetchSubjects = async () => {
+const loadData = async () => {
   loading.value = true;
   try {
-    const response = await api.get('/admin/api/subjects');
-    subjects.value = response.data;
-    console.log(response.data);
+    const { data, error: fetchError } = await fetchCatalogData();
+    if (fetchError) throw new Error(fetchError);
+    subjects.value = data;
   } catch (err) {
     error.value = 'Failed to fetch subjects.';
     console.error(err);
@@ -32,7 +32,7 @@ const deleteChapter = async (chapterId) => {
   try {
     const response = await api.delete(`/admin/api/chapters/${chapterId}`);
     if (response.status === 200) {
-      await fetchSubjects();
+      await loadData();
     }
   } catch (err) {
     error.value = err.response?.data?.msg || 'Failed to delete chapter.';
@@ -44,7 +44,7 @@ const deleteSubject = async (subjectId) => {
   try {
     const response = await api.delete(`/admin/api/subjects/${subjectId}`);
     if (response.status === 200) {
-      await fetchSubjects();
+      await loadData();
     }
   } catch (err) {
     error.value = err.response?.data?.msg || 'Failed to delete subject.';
@@ -66,7 +66,7 @@ const openChapterModal = (subject, chapter = null) => {
 };
 
 onMounted(() => {
-  fetchSubjects();
+  loadData();
 });
 </script>
 
@@ -101,7 +101,7 @@ onMounted(() => {
              <ul class="list-group list-group-flush">
               <li v-for="chapter in subject.chapters" :key="chapter.id" 
                   class="list-group-item list-group-item-action shadow-sm border-0 mb-2 transition-all d-flex justify-content-between align-items-center">
-                <span>{{ chapter.name }} </span>
+                <span>{{ chapter.name }} ({{ chapter.quizzes.length }})</span>
                 <div class="btn-group">
                   <button @click="openChapterModal(subject, chapter)" 
                           class="btn btn-sm btn-outline-primary">
@@ -131,8 +131,8 @@ onMounted(() => {
       :subject="selectedSubject"
       :is-editing="isEditingSubject"
       @close="showSubjectModal = false"
-      @subject-added="fetchSubjects"
-      @subject-updated="fetchSubjects"
+      @subject-added="loadData"
+      @subject-updated="loadData"
     />
 
     <ChapterFormModal
@@ -141,8 +141,8 @@ onMounted(() => {
       :subject-id="selectedSubject?.id"
       :is-editing="isEditingChapter"
       @close="showChapterModal = false"
-      @chapter-added="fetchSubjects"
-      @chapter-updated="fetchSubjects"
+      @chapter-added="loadData"
+      @chapter-updated="loadData"
     />
   </div>
 </template>
