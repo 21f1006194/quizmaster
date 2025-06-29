@@ -12,6 +12,9 @@ from app.services.catalog import (
     get_chapter_by_id,
     get_quizzes_by_chapter,
     get_quiz_by_id,
+    get_all_quizzes,
+    get_questions_by_quiz,
+    get_question_by_id,
 )
 from app.services.admin import (
     create_subject,
@@ -25,6 +28,11 @@ from app.services.admin.quiz_admin_service import (
     create_quiz,
     update_quiz,
     delete_quiz,
+)
+from app.services.admin.question_admin_service import (
+    create_question,
+    update_question,
+    delete_question,
 )
 
 admin_bp = Blueprint("admin_api", __name__)
@@ -278,6 +286,133 @@ class QuizDetail(Resource):
             return {"msg": "Failed to delete quiz"}, 500
 
 
+class AllQuiz(Resource):
+    @admin_required
+    def get(self):
+        try:
+            quizzes = get_all_quizzes()
+            return [
+                {
+                    "id": quiz.id,
+                    "title": quiz.title,
+                    "quiz_date": quiz.quiz_date.isoformat(),
+                    "time_duration": quiz.time_duration,
+                    "remarks": quiz.remarks,
+                    "chapter_id": quiz.chapter_id,
+                }
+                for quiz in quizzes
+            ], 200
+        except Exception as e:
+            return {"msg": "Failed to fetch quizzes"}, 500
+
+
+# ------------------ Question Endpoints ------------------
+class QuestionList(Resource):
+    @admin_required
+    def get(self, quiz_id):
+        questions = get_questions_by_quiz(quiz_id)
+        return {
+            "questions": [
+                {
+                    "id": q.id,
+                    "question": q.question,
+                    "max_marks": q.max_marks,
+                    "options": [
+                        {
+                            "id": opt.id,
+                            "option_text": opt.option_text,
+                            "is_correct": opt.is_correct,
+                        }
+                        for opt in q.options
+                    ],
+                }
+                for q in questions
+            ]
+        }, 200
+
+    @admin_required
+    def post(self, quiz_id):
+        data = request.get_json()
+
+        # Validate required fields
+        required_fields = ["question", "options"]
+        for field in required_fields:
+            if field not in data:
+                return {"msg": f"Missing required field: {field}"}, 400
+
+        try:
+            question = create_question(quiz_id, data)
+            return {
+                "id": question.id,
+                "question": question.question,
+                "max_marks": question.max_marks,
+                "options": [
+                    {
+                        "id": opt.id,
+                        "option_text": opt.option_text,
+                        "is_correct": opt.is_correct,
+                    }
+                    for opt in question.options
+                ],
+            }, 201
+        except Exception as e:
+            import traceback
+
+            traceback.print_exc()
+            return {"msg": "Failed to create question"}, 500
+
+
+class QuestionDetail(Resource):
+    @admin_required
+    def get(self, question_id):
+        question = get_question_by_id(question_id)
+        if not question:
+            return {"msg": "Question not found"}, 404
+
+        return {
+            "id": question.id,
+            "question": question.question,
+            "max_marks": question.max_marks,
+            "options": [
+                {
+                    "id": opt.id,
+                    "option_text": opt.option_text,
+                    "is_correct": opt.is_correct,
+                }
+                for opt in question.options
+            ],
+        }, 200
+
+    @admin_required
+    def put(self, question_id):
+        data = request.get_json()
+        question = update_question(question_id, data)
+
+        if not question:
+            return {"msg": "Question not found"}, 404
+
+        return {
+            "id": question.id,
+            "question": question.question,
+            "max_marks": question.max_marks,
+            "options": [
+                {
+                    "id": opt.id,
+                    "option_text": opt.option_text,
+                    "is_correct": opt.is_correct,
+                }
+                for opt in question.options
+            ],
+        }, 200
+
+    @admin_required
+    def delete(self, question_id):
+        success = delete_question(question_id)
+        if not success:
+            return {"msg": "Question not found"}, 404
+        return {"msg": "Question deleted successfully"}, 200
+
+
 # ------------------ Route Registrations ------------------
 admin_api.add_resource(SubjectList, "/subjects")
 admin_api.add_resource(SubjectDetail, "/subjects/<int:subject_id>")
@@ -287,3 +422,7 @@ admin_api.add_resource(ChapterDetail, "/chapters/<int:chapter_id>")
 
 admin_api.add_resource(QuizList, "/chapters/<int:chapter_id>/quiz")
 admin_api.add_resource(QuizDetail, "/quiz/<int:quiz_id>")
+admin_api.add_resource(AllQuiz, "/quizzes")
+
+admin_api.add_resource(QuestionList, "/quiz/<int:quiz_id>/questions")
+admin_api.add_resource(QuestionDetail, "/questions/<int:question_id>")

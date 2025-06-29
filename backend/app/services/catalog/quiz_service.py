@@ -9,3 +9,8 @@ def get_quizzes_by_chapter(chapter_id):
 def get_quiz_by_id(quiz_id):
     quiz = Quiz.query.get(quiz_id)
     return quiz
+
+
+def get_all_quizzes():
+    quizzes = Quiz.query.all()
+    return quizzes
