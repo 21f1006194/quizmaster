@@ -18,7 +18,7 @@ class Question(db.Model):
         return max_marks
 
     @validates("question")
-    def validate_question(question):
+    def validate_question(self, key, question):
         if not question.strip():
             raise ValueError("Question cannot be empty")
         return question

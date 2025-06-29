@@ -9,7 +9,7 @@ class Option(db.Model):
     is_correct = db.Column(db.Boolean, default=False)
 
     @validates("option_text")
-    def validate_option_text(option_text):
+    def validate_option_text(self, key, option_text):
         if not option_text.strip():
             raise ValueError("Option text cannot be empty")
         return option_text
