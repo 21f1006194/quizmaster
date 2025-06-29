@@ -49,7 +49,6 @@ const authStore = useAuthStore();
 const loginUser = async ()=>{
   try{
     const response = await api.post('/api/login', authData);
-    alert('Login successful');
     const token = response.data.access_token;
     const role = response.data.role;
     

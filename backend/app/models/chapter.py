@@ -8,7 +8,9 @@ class Chapter(db.Model):
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
 
-    quizzes = db.relationship("Quiz", backref="chapter", lazy=True)
+    quizzes = db.relationship(
+        "Quiz", backref="chapter", lazy=True, cascade="all, delete-orphan"
+    )
 
     @validates("name")
     def validate_name(self, key, name):
