@@ -52,6 +52,19 @@ const router = createRouter({
       component: UserDashboard,
       meta: { requiresAuth: true, role: 'user' },
     },
+    {
+      path: '/user/home',
+      name: 'userHome',
+      component: UserDashboard,
+      meta: { requiresAuth: true, role: 'user' },
+    },
+
+    // {
+    //   path: '/user/attempt-quiz/:quizId',
+    //   name: 'AttemptQuiz',
+    //   component: () => import('../views/AttemptQuiz.vue'),
+    //   props: true
+    // },
   ],
 })
 
