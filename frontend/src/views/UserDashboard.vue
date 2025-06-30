@@ -5,13 +5,22 @@
     </div>
 
     <div class="search-section">
-      <div class="search-bar">
-        <input 
-          type="text" 
-          v-model="searchQuery" 
-          placeholder="Search quizzes..." 
-          @input="searchQuizzes"
-        />
+      <div class="search-container">
+        <div class="search-bar">
+          <input 
+            type="text" 
+            v-model="searchQuery" 
+            placeholder="Search quizzes..." 
+            @input="searchQuizzes"
+          />
+        </div>
+        <div class="date-picker">
+          <input 
+            type="date" 
+            v-model="selectedDate"
+            @change="searchQuizzes"
+          />
+        </div>
       </div>
     </div>
 
@@ -26,6 +35,34 @@
       </div>
 
       <template v-else>
+        <section v-if="(searchQuery || selectedDate) && filteredQuizzes.length > 0" class="quiz-section search-results">
+          <h2>Search Results</h2>
+          <div class="quiz-list">
+            <div v-for="quiz in filteredQuizzes" :key="quiz.id" class="quiz-item">
+              <div class="quiz-info">
+                <div class="quiz-time">
+                  <span class="icon">⏱️</span>
+                </div>
+                <div class="quiz-details">
+                  <h3>{{ quiz.title }}</h3>
+                  <p>{{ quiz.subject }} | {{ quiz.chapter }}</p>
+                  <p class="quiz-metadata">
+                    Duration: {{ quiz.duration }} minutes | 
+                    Start Time: {{ new Date(quiz.date).toLocaleString() }}
+                  </p>
+                  <p v-if="quiz.remarks" class="quiz-remarks">{{ quiz.remarks }}</p>
+                </div>
+              </div>
+              <button 
+                :class="['action-btn', getQuizButtonClass(quiz)]" 
+                @click="handleQuizAction(quiz)"
+              >
+                {{ getQuizButtonText(quiz) }}
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section v-if="ongoingQuizzes.length > 0" class="quiz-section ongoing">
           <h2>Ongoing Quizzes</h2>
           <div class="quiz-list">
@@ -121,6 +158,12 @@ const previousQuizzes = ref([]);
 const loading = ref(true);
 const error = ref(null);
 
+// Add new ref for filtered quizzes
+const filteredQuizzes = ref([]);
+
+// Add new ref for date filter
+const selectedDate = ref('');
+
 // Function to categorize quizzes based on their dates
 const categorizeQuizzes = (quizzes) => {
   const now = new Date();
@@ -207,9 +250,71 @@ const loadQuizData = async () => {
 };
 
 const searchQuizzes = () => {
-  // TODO: Implement search functionality
-  // This will filter through ongoingQuizzes, upcomingQuizzes, and previousQuizzes
-  // based on the searchQuery.value
+  if (!searchQuery.value.trim() && !selectedDate.value) {
+    filteredQuizzes.value = [];
+    return;
+  }
+
+  const query = searchQuery.value.toLowerCase();
+  const allQuizzes = [...ongoingQuizzes.value, ...upcomingQuizzes.value, ...previousQuizzes.value];
+  
+  filteredQuizzes.value = allQuizzes.filter(quiz => {
+    // If there's a search query, check for matches
+    const matchesSearch = !query || 
+      quiz.title.toLowerCase().includes(query) ||
+      quiz.subject.toLowerCase().includes(query) ||
+      quiz.chapter.toLowerCase().includes(query);
+
+    // If there's a selected date, check for date match
+    if (selectedDate.value) {
+      const quizDate = new Date(quiz.date);
+      const filterDate = new Date(selectedDate.value);
+      const matchesDate = 
+        quizDate.getFullYear() === filterDate.getFullYear() &&
+        quizDate.getMonth() === filterDate.getMonth() &&
+        quizDate.getDate() === filterDate.getDate();
+      
+      // If there's a search query, both conditions must match
+      // If there's no search query, only date needs to match
+      return query ? (matchesSearch && matchesDate) : matchesDate;
+    }
+
+    // If no date selected, return search matches
+    return matchesSearch;
+  });
+};
+
+// Helper functions for quiz buttons
+const getQuizButtonClass = (quiz) => {
+  const now = new Date();
+  const quizDate = new Date(quiz.date);
+  const endDate = new Date(quizDate.getTime() + quiz.duration * 60000);
+
+  if (now >= quizDate && now <= endDate) return 'start';
+  if (now < quizDate) return 'reminder';
+  return 'results';
+};
+
+const getQuizButtonText = (quiz) => {
+  const now = new Date();
+  const quizDate = new Date(quiz.date);
+  const endDate = new Date(quizDate.getTime() + quiz.duration * 60000);
+
+  if (now >= quizDate && now <= endDate) return 'Start Quiz';
+  if (now < quizDate) return 'Set Reminder';
+  return 'See Results';
+};
+
+const handleQuizAction = (quiz) => {
+  const now = new Date();
+  const quizDate = new Date(quiz.date);
+  const endDate = new Date(quizDate.getTime() + quiz.duration * 60000);
+
+  if (now >= quizDate && now <= endDate) {
+    // Navigate to quiz
+    router.push(`/user/attempt-quiz/${quiz.id}`);
+  }
+  // Add other actions as needed
 };
 
 onMounted(() => {
@@ -237,8 +342,15 @@ onMounted(() => {
   margin-bottom: 30px;
 }
 
-.search-bar {
+.search-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
   margin-bottom: 15px;
+}
+
+.search-bar {
+  flex: 1;
 }
 
 .search-bar input {
@@ -248,6 +360,19 @@ onMounted(() => {
   border-radius: 8px;
   font-size: 16px;
   background-color: #f9f9f9;
+}
+
+.date-picker input {
+  padding: 11px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.date-picker input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
 }
 
 .quizzes-section {
@@ -385,5 +510,13 @@ onMounted(() => {
 
 .retry-btn:hover {
   background-color: #5a6268;
+}
+
+.search-results {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f0f8ff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
 }
 </style>
