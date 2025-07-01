@@ -59,12 +59,12 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 'user' },
     },
 
-    // {
-    //   path: '/user/attempt-quiz/:quizId',
-    //   name: 'AttemptQuiz',
-    //   component: () => import('../views/AttemptQuiz.vue'),
-    //   props: true
-    // },
+    {
+      path: '/user/attempt-quiz/:quizId',
+      name: 'AttemptQuiz',
+      component: () => import('../views/AttemptQuiz.vue'),
+      props: true
+    },
   ],
 })
 
