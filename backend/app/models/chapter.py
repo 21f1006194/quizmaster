@@ -9,7 +9,7 @@ class Chapter(db.Model):
     description = db.Column(db.Text)
 
     quizzes = db.relationship(
-        "Quiz", backref="chapter", lazy=True, cascade="all, delete-orphan"
+        "Quiz", back_populates="chapter", lazy=True, cascade="all, delete-orphan"
     )
 
     @validates("name")
