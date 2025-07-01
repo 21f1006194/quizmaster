@@ -11,6 +11,7 @@ class Quiz(db.Model):
     time_duration = db.Column(db.Integer, nullable=False)
     remarks = db.Column(db.Text)
 
+    chapter = db.relationship("Chapter", back_populates="quizzes", lazy=True)
     questions = db.relationship("Question", backref="quiz", lazy=True)
     attempts = db.relationship("QuizAttempt", backref="quiz", lazy=True)
 

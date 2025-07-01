@@ -1,11 +1,15 @@
 import api from '@/api';
+import { useAuthStore } from '@/stores/authStore';
 
 export const fetchCatalogData = async () => {
     try {
+        const authStore = useAuthStore();
+        const baseUrl = authStore.role === 'admin' ? '/admin/api' : '/user/api';
+
         // Fetch subjects and quizzes in parallel
         const [subjectsResponse, quizzesResponse] = await Promise.all([
-            api.get('/admin/api/subjects'),
-            api.get('/admin/api/quizzes')
+            api.get(`${baseUrl}/subjects`),
+            api.get(`${baseUrl}/quizzes`)
         ]);
 
         // First, organize quizzes by chapter_id
@@ -31,7 +35,8 @@ export const fetchCatalogData = async () => {
                 }))
             }))
         };
-
+        // Print the organized data as json
+        console.log(JSON.stringify(organizedData, null, 2));
         return { data: organizedData, error: null };
     } catch (error) {
         console.error('Error fetching catalog data:', error);
