@@ -16,6 +16,9 @@
           @change="searchQuizzes"
         />
       </div>
+      <button class="help-button" @click="showHelpModal = true">
+        <i class="bi bi-question-circle"></i>
+      </button>
     </div>
 
     <!-- Search Results -->
@@ -25,12 +28,17 @@
       section-title="Search Results"
       section-type="search"
     />
+
+    <!-- Help Modal -->
+    <SearchHelpModal v-model="showHelpModal" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import QuizList from './QuizList.vue';
+import SearchHelpModal from './SearchHelpModal.vue';
+import { QueryParser } from '@/utils/queryParser';
 
 const props = defineProps({
   quizzes: {
@@ -42,6 +50,8 @@ const props = defineProps({
 const searchQuery = ref('');
 const selectedDate = ref('');
 const filteredQuizzes = ref([]);
+const showHelpModal = ref(false);
+const queryParser = new QueryParser();
 
 const searchQuizzes = () => {
   if (!searchQuery.value.trim() && !selectedDate.value) {
@@ -49,16 +59,10 @@ const searchQuizzes = () => {
     return;
   }
 
-  const query = searchQuery.value.toLowerCase();
+  const parsedQuery = queryParser.parse(searchQuery.value);
   
   filteredQuizzes.value = props.quizzes.filter(quiz => {
-    // If there's a search query, check for matches
-    const matchesSearch = !query || 
-      quiz.title.toLowerCase().includes(query) ||
-      quiz.subject.toLowerCase().includes(query) ||
-      quiz.chapter.toLowerCase().includes(query);
-
-    // If there's a selected date, check for date match
+    // Apply date filter from date picker if selected
     if (selectedDate.value) {
       const quizDate = new Date(quiz.date);
       const filterDate = new Date(selectedDate.value);
@@ -67,14 +71,97 @@ const searchQuizzes = () => {
         quizDate.getMonth() === filterDate.getMonth() &&
         quizDate.getDate() === filterDate.getDate();
       
-      // If there's a search query, both conditions must match
-      // If there's no search query, only date needs to match
-      return query ? (matchesSearch && matchesDate) : matchesDate;
+      if (!matchesDate) return false;
     }
 
-    // If no date selected, return search matches
-    return matchesSearch;
+    // If no parsed query, return true (only date filter applied)
+    if (!parsedQuery) return true;
+
+    // Apply filters from query
+    for (const filter of parsedQuery.filters) {
+      if (filter.type === 'DATE_FILTER') {
+        const quizDate = new Date(quiz.date);
+        const filterDate = new Date(filter.value);
+        
+        if (filter.field === 'after' && quizDate < filterDate) return false;
+        if (filter.field === 'before' && quizDate > filterDate) return false;
+      }
+      
+      if (filter.type === 'DURATION_FILTER') {
+        const duration = quiz.duration;
+        const filterValue = filter.value;
+        
+        switch (filterValue.type) {
+          case 'RANGE':
+            if (duration < filterValue.min || duration > filterValue.max) return false;
+            break;
+          case 'GREATER_THAN':
+            if (duration <= filterValue.value) return false;
+            break;
+          case 'LESS_THAN':
+            if (duration >= filterValue.value) return false;
+            break;
+          case 'EXACT':
+            if (duration !== filterValue.value) return false;
+            break;
+        }
+      }
+    }
+
+    // Apply search terms
+    let matches = true;
+    let hasOrMatch = false;
+
+    for (let i = 0; i < parsedQuery.terms.length; i++) {
+      const term = parsedQuery.terms[i];
+      const operator = parsedQuery.operators[i] || 'AND';
+      
+      const termMatches = evaluateTerm(term, quiz);
+      
+      if (operator === 'OR') {
+        hasOrMatch = hasOrMatch || termMatches;
+      } else {
+        matches = matches && termMatches;
+      }
+    }
+
+    return matches && (parsedQuery.operators.length === 0 || hasOrMatch);
   });
+};
+
+const evaluateTerm = (term, quiz) => {
+  const searchValue = term.value.toLowerCase();
+  
+  switch (term.type) {
+    case 'EXACT_PHRASE':
+      return (
+        quiz.title.toLowerCase().includes(searchValue) ||
+        quiz.subject.toLowerCase().includes(searchValue) ||
+        quiz.chapter.toLowerCase().includes(searchValue) ||
+        (quiz.remarks && quiz.remarks.toLowerCase().includes(searchValue))
+      );
+      
+    case 'FIELD_SEARCH':
+      const fieldValue = quiz[term.field]?.toLowerCase() || '';
+      return fieldValue.includes(searchValue);
+      
+    case 'NOT':
+      return !(
+        quiz.title.toLowerCase().includes(searchValue) ||
+        quiz.subject.toLowerCase().includes(searchValue) ||
+        quiz.chapter.toLowerCase().includes(searchValue) ||
+        (quiz.remarks && quiz.remarks.toLowerCase().includes(searchValue))
+      );
+      
+    case 'TERM':
+    default:
+      return (
+        quiz.title.toLowerCase().includes(searchValue) ||
+        quiz.subject.toLowerCase().includes(searchValue) ||
+        quiz.chapter.toLowerCase().includes(searchValue) ||
+        (quiz.remarks && quiz.remarks.toLowerCase().includes(searchValue))
+      );
+  }
 };
 </script>
 
@@ -114,5 +201,19 @@ const searchQuizzes = () => {
 
 .date-picker input::-webkit-calendar-picker-indicator {
   cursor: pointer;
+}
+
+.help-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  transition: color 0.2s;
+}
+
+.help-button:hover {
+  color: #333;
 }
 </style> 
