@@ -22,12 +22,14 @@
     </div>
 
     <!-- Search Results -->
-    <QuizList
-      v-if="(searchQuery || selectedDate) && filteredQuizzes.length > 0"
-      :quizzes="filteredQuizzes"
-      section-title="Search Results"
-      section-type="search"
-    />
+    <div v-if="(searchQuery || selectedDate) && filteredQuizzes.length > 0" 
+         class="search-results-container">
+      <QuizList
+        :quizzes="filteredQuizzes"
+        section-title="Search Results"
+        section-type="search"
+      />
+    </div>
 
     <!-- Help Modal -->
     <SearchHelpModal v-model="showHelpModal" />
@@ -35,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import QuizList from './QuizList.vue';
 import SearchHelpModal from './SearchHelpModal.vue';
 import { QueryParser } from '@/utils/queryParser';
@@ -44,15 +46,20 @@ const props = defineProps({
   quizzes: {
     type: Array,
     required: true
+  },
+  initialSearch: {
+    type: String,
+    default: ''
   }
 });
 
-const searchQuery = ref('');
+const searchQuery = ref(props.initialSearch);
 const selectedDate = ref('');
 const filteredQuizzes = ref([]);
 const showHelpModal = ref(false);
 const queryParser = new QueryParser();
 
+// Define searchQuizzes first
 const searchQuizzes = () => {
   if (!searchQuery.value.trim() && !selectedDate.value) {
     filteredQuizzes.value = [];
@@ -129,6 +136,13 @@ const searchQuizzes = () => {
   });
 };
 
+// Use onMounted instead of watch to trigger initial search
+onMounted(() => {
+  if (props.initialSearch) {
+    searchQuizzes();
+  }
+});
+
 const evaluateTerm = (term, quiz) => {
   const searchValue = term.value.toLowerCase();
   
@@ -167,14 +181,14 @@ const evaluateTerm = (term, quiz) => {
 
 <style scoped>
 .search-section {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .search-container {
   display: flex;
   gap: 15px;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .search-bar {
@@ -215,5 +229,14 @@ const evaluateTerm = (term, quiz) => {
 
 .help-button:hover {
   color: #333;
+}
+
+.search-results-container {
+  background-color: #edeeee;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 10px;  /* Add space between search bar and results */
+  margin-bottom: 30px;
 }
 </style> 
