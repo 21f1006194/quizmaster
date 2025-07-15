@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { fetchCatalogData } from '@/utils/catalogData';
 import SubjectFormModal from '@/components/modals/SubjectFormModal.vue';
 import ChapterFormModal from '@/components/modals/ChapterFormModal.vue';
+
+const router = useRouter();
 
 const subjects = ref({ subjects: [] });
 const loading = ref(false);
@@ -65,6 +68,14 @@ const openChapterModal = (subject, chapter = null) => {
   showChapterModal.value = true;
 };
 
+const navigateToQuizzes = (subject, chapter) => {
+  const searchQuery = `subject:${subject.name} chapter:${chapter.name}`;
+  router.push({
+    name: 'adminQuiz',
+    query: { search: searchQuery }
+  });
+};
+
 onMounted(() => {
   loadData();
 });
@@ -100,9 +111,11 @@ onMounted(() => {
           <div class="card-body">            
              <ul class="list-group list-group-flush">
               <li v-for="chapter in subject.chapters" :key="chapter.id" 
-                  class="list-group-item list-group-item-action shadow-sm border-0 mb-2 transition-all d-flex justify-content-between align-items-center">
+                  class="list-group-item list-group-item-action shadow-sm border-0 mb-2 transition-all d-flex justify-content-between align-items-center chapter-row"
+                  @click="navigateToQuizzes(subject, chapter)"
+              >
                 <span>{{ chapter.name }} ({{ chapter.quizzes.length }})</span>
-                <div class="btn-group">
+                <div class="btn-group" @click.stop>
                   <button @click="openChapterModal(subject, chapter)" 
                           class="btn btn-sm btn-outline-primary">
                     Edit
@@ -179,5 +192,18 @@ onMounted(() => {
 
 .btn-link:hover {
   color: #0d6efd;
+}
+
+.chapter-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.chapter-row:hover {
+  background-color: #f8f9fa;
+}
+
+.btn-group {
+  z-index: 1;
 }
 </style>

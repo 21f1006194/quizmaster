@@ -24,6 +24,15 @@ def update_quiz(quiz_id, data):
     quiz.quiz_date = data.get("quiz_date", quiz.quiz_date)
     quiz.time_duration = data.get("time_duration", quiz.time_duration)
     quiz.remarks = data.get("remarks", quiz.remarks)
+
+    if "chapter_id" in data:
+        from app.models.chapter import Chapter
+
+        chapter = Chapter.query.get(data["chapter_id"])
+        if not chapter:
+            raise ValueError("Invalid chapter ID")
+        quiz.chapter_id = data["chapter_id"]
+
     db.session.commit()
     return quiz
 

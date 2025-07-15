@@ -1,6 +1,12 @@
 <template>
-  <section v-if="quizzes.length > 0" class="quiz-section">
-    <h2>{{ sectionTitle }}</h2>
+  <section v-if="quizzes.length > 0" 
+    :class="['quiz-section', { 'search-results': sectionType === 'search' }]">
+    <h2>
+      {{ sectionTitle }}
+      <span v-if="sectionType === 'search'" class="result-count">
+        ({{ quizzes.length }} results found)
+      </span>
+    </h2>
     <div class="quiz-list">
       <!-- Emit the emits for now, will handle later TODO -->
       <QuizCard
@@ -65,7 +71,7 @@ const props = defineProps({
   sectionType: {
     type: String,
     required: true,
-    validator: (value) => ['ongoing', 'upcoming', 'previous'].includes(value)
+    validator: (value) => ['ongoing', 'upcoming', 'previous', 'search'].includes(value)
   }
 });
 
@@ -173,5 +179,18 @@ watch(() => props.quizzes, () => {
   .pagination-btn {
     order: 1;
   }
+}
+
+.quiz-section.search-results {
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.result-count {
+  font-size: 16px;
+  color: #6c757d;
+  font-weight: normal;
+  margin-left: 10px;
 }
 </style> 

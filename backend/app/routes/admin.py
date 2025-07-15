@@ -239,30 +239,25 @@ class QuizDetail(Resource):
             return {"msg": "Quiz not found"}, 404
 
         try:
-            # Update quiz data
-            update_data = {}
-
-            if "title" in data:
-                update_data["title"] = data["title"]
-
+            # Validate quiz date if provided
             if "quiz_date" in data:
                 quiz_date = datetime.fromisoformat(
                     data["quiz_date"].replace("Z", "+00:00")
                 )
                 if quiz_date < datetime.now():
                     return {"msg": "Quiz date must be in the future"}, 400
-                update_data["quiz_date"] = quiz_date
+                data["quiz_date"] = quiz_date
 
+            # Convert time_duration to int if provided
             if "time_duration" in data:
-                update_data["time_duration"] = int(data["time_duration"])
+                data["time_duration"] = int(data["time_duration"])
 
-            if "remarks" in data:
-                update_data["remarks"] = data["remarks"]
-
-            updated_quiz = update_quiz(quiz_id, update_data)
+            updated_quiz = update_quiz(quiz_id, data)
             return {
                 "id": updated_quiz.id,
                 "title": updated_quiz.title,
+                "chapter_id": updated_quiz.chapter_id,
+                "chapter_name": updated_quiz.chapter.name,
                 "quiz_date": updated_quiz.quiz_date.isoformat(),
                 "time_duration": updated_quiz.time_duration,
                 "remarks": updated_quiz.remarks,
@@ -310,25 +305,46 @@ class AllQuiz(Resource):
 class QuestionList(Resource):
     @admin_required
     def get(self, quiz_id):
-        questions = get_questions_by_quiz(quiz_id)
-        return {
-            "questions": [
-                {
-                    "id": q.id,
-                    "question": q.question,
-                    "max_marks": q.max_marks,
-                    "options": [
-                        {
-                            "id": opt.id,
-                            "option_text": opt.option_text,
-                            "is_correct": opt.is_correct,
-                        }
-                        for opt in q.options
-                    ],
-                }
-                for q in questions
-            ]
-        }, 200
+        try:
+            quiz = get_quiz_by_id(quiz_id)
+            if not quiz:
+                return {"msg": "Quiz not found"}, 404
+            questions = get_questions_by_quiz(quiz_id)
+
+            return {
+                "quiz_id": quiz_id,
+                "quiz_details": {
+                    "quiz_id": quiz_id,
+                    "quiz_title": quiz.title,
+                    "quiz_date": quiz.quiz_date.isoformat(),
+                    "time_duration": quiz.time_duration,
+                    "remarks": quiz.remarks,
+                    "chapter_id": quiz.chapter_id,
+                    "chapter_name": quiz.chapter.name,
+                    "subject_name": quiz.chapter.subject.name,
+                },
+                "questions": [
+                    {
+                        "id": q.id,
+                        "question": q.question,
+                        "max_marks": q.max_marks,
+                        "options": [
+                            {
+                                "id": opt.id,
+                                "option_text": opt.option_text,
+                                "is_correct": opt.is_correct,
+                            }
+                            for opt in q.options
+                        ],
+                    }
+                    for q in questions
+                ],
+            }, 200
+        except Exception as e:
+            import traceback
+
+            traceback.print_exc()
+            return {"msg": "Failed to fetch questions"}, 500
 
     @admin_required
     def post(self, quiz_id):

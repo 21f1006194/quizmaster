@@ -45,7 +45,12 @@ const router = createRouter({
       component: AdminQuiz,
       meta: { requiresAuth: true, role: 'admin' },
     },
-
+    {
+      path: '/admin/quiz-edit/:quizId',
+      name: 'adminQuizEdit',
+      component: () => import('../views/AdminQuizEdit.vue'),
+      meta: { requiresAuth: true, role: 'admin' },
+    },
     {
       path: '/user/dashboard',
       name: 'userDashboard',

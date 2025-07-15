@@ -16,13 +16,29 @@
     </div>
 
     <!-- Admin View -->
-    <button 
-      v-if="isAdmin" 
-      class="action-btn edit"
-      @click="$emit('edit-quiz', quiz.id)"
-    >
-      Edit Quiz
-    </button>
+    <template v-if="isAdmin">
+      <button 
+        v-if="effectiveQuizState === 'ongoing'"
+        class="action-btn view"
+        @click="$emit('view-quiz', quiz.id)"
+      >
+        View Quiz
+      </button>
+      <button 
+        v-else-if="effectiveQuizState === 'upcoming'"
+        class="action-btn edit"
+        @click="editQuiz"
+      >
+        Edit Quiz
+      </button>
+      <button 
+        v-else
+        class="action-btn results"
+        @click="$emit('view-results', quiz.id)"
+      >
+        See Results
+      </button>
+    </template>
 
     <!-- User View -->
     <template v-else>
@@ -73,7 +89,7 @@ const props = defineProps({
 
 defineEmits(['reminder-set', 'view-results', 'edit-quiz']);
 
-const isAdmin = computed(() => authStore.user?.role === 'admin');
+const isAdmin = computed(() => authStore.role === 'admin');
 
 // Calculate quiz state if not provided or invalid
 const calculateQuizState = () => {
@@ -96,6 +112,10 @@ const effectiveQuizState = computed(() => {
 
 const startQuiz = () => {
   router.push(`/user/attempt-quiz/${props.quiz.id}`);
+};
+
+const editQuiz = () => {
+  router.push(`/admin/quiz-edit/${props.quiz.id}`);
 };
 </script>
 
