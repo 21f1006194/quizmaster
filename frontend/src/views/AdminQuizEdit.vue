@@ -131,7 +131,7 @@ onMounted(() => {
                  :key="question.id" 
                  class="question-item">
               <div class="question-header d-flex justify-content-between align-items-center">
-                <h5>Q{{ index + 1 }}. {{ question.question }}</h5>
+                <h5 v-html="question.question"></h5>
                 <div class="d-flex align-items-center gap-3">
                   <span class="badge bg-primary">{{ question.max_marks }} marks</span>
                   <button 

@@ -5,7 +5,7 @@
     </div>
     
     <div class="question-content">
-      <h3>{{ currentQuestion?.question }}</h3>
+      <h3 v-html="currentQuestion?.question"></h3>
       <div class="options">
         <div v-for="option in currentQuestion?.options" :key="option.id" class="option">
           <input 

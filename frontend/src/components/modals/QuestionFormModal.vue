@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import api from '@/api';
+import QuizEditor from '@/components/QuizEditor.vue';
 
 const props = defineProps({
   show: Boolean,
@@ -130,13 +131,7 @@ const handleSubmit = async () => {
           <div v-if="error" class="alert alert-danger">{{ error }}</div>
           
           <div class="mb-3">
-            <label class="form-label">Question</label>
-            <textarea 
-              class="form-control" 
-              v-model="questionText"
-              rows="3"
-              placeholder="Enter your question here"
-            ></textarea>
+            <QuizEditor v-model="questionText" />
           </div>
 
           <div class="mb-3">
