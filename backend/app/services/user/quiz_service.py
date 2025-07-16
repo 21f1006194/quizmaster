@@ -93,6 +93,11 @@ def close_quiz_attempt(user_id, quiz_id):
             raise ValueError("No active attempt found")
 
         attempt.in_progress = False
+        score = 0
+        for res in attempt.responses:
+            if res.option.is_correct:
+                score += res.question.max_marks
+        attempt.score = score
         attempt.end_time = datetime.now(timezone.utc)
         db.session.commit()
         return attempt

@@ -10,4 +10,6 @@ class UserResponse(db.Model):
     )  # Nullable if not attempted
     is_attempted = db.Column(db.Boolean, default=False)
 
+    option = db.relationship("Option", backref="user_responses", lazy=True)
+
     ## TODO: Add a validator to check the is_attempted field is True if option_id is not None
