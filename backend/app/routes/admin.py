@@ -34,6 +34,11 @@ from app.services.admin.question_admin_service import (
     update_question,
     delete_question,
 )
+from app.services.admin.user_admin_service import (
+    get_all_users,
+    block_user,
+    unblock_user,
+)
 
 admin_bp = Blueprint("admin_api", __name__)
 admin_api = Api(admin_bp)
@@ -429,6 +434,31 @@ class QuestionDetail(Resource):
         return {"msg": "Question deleted successfully"}, 200
 
 
+# ------------------ User Details Endpoints ------------------
+class UserDetails(Resource):
+    @admin_required
+    def get(self):
+        users = get_all_users()
+        return (
+            users,
+            200,
+        )  # Return the users directly as they already have the right structure
+
+
+class BlockUser(Resource):
+    @admin_required
+    def post(self, user_id):
+        user = block_user(user_id)
+        return {"msg": "User blocked successfully"}, 200
+
+
+class UnblockUser(Resource):
+    @admin_required
+    def post(self, user_id):
+        user = unblock_user(user_id)
+        return {"msg": "User unblocked successfully"}, 200
+
+
 # ------------------ Route Registrations ------------------
 admin_api.add_resource(SubjectList, "/subjects")
 admin_api.add_resource(SubjectDetail, "/subjects/<int:subject_id>")
@@ -442,3 +472,7 @@ admin_api.add_resource(AllQuiz, "/quizzes")
 
 admin_api.add_resource(QuestionList, "/quiz/<int:quiz_id>/questions")
 admin_api.add_resource(QuestionDetail, "/questions/<int:question_id>")
+
+admin_api.add_resource(UserDetails, "/all_users")
+admin_api.add_resource(BlockUser, "/block_user/<int:user_id>")
+admin_api.add_resource(UnblockUser, "/unblock_user/<int:user_id>")

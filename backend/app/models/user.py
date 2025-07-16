@@ -15,6 +15,7 @@ class User(db.Model, UserMixin):
     full_name = db.Column(db.String(255), nullable=False)
     qualification = db.Column(db.String(255))
     date_of_birth = db.Column(db.Date)
+    is_blocked = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
 
     quiz_attempts = db.relationship("QuizAttempt", backref="user", lazy=True)
