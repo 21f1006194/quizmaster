@@ -50,7 +50,8 @@ const filterUsers = () => {
     return (
       (user.username && user.username.toLowerCase().includes(query)) ||
       (user.email && user.email.toLowerCase().includes(query)) ||
-      (user.full_name && user.full_name.toLowerCase().includes(query))
+      (user.full_name && user.full_name.toLowerCase().includes(query)) ||
+      (user.keywords && user.keywords.toLowerCase().includes(query))
     );
   });
 };
@@ -59,8 +60,13 @@ onMounted(async () => {
   try {
     loading.value = true;
     const response = await api.get('/admin/api/all_users');
-    users.value = response.data;
-    filteredUsers.value = response.data;
+    // Add keywords field to each user
+    const usersWithKeywords = response.data.map(user => ({
+      ...user,
+      keywords: user.isBlocked ? 'blocked' : ''
+    }));
+    users.value = usersWithKeywords;
+    filteredUsers.value = usersWithKeywords;
   } catch (error) {
     console.error('Failed to fetch users:', error);
     users.value = [];
