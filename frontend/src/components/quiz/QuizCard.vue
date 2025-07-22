@@ -59,7 +59,7 @@
       <button 
         v-else
         class="action-btn results"
-        @click="$emit('view-results', quiz.id)"
+        @click="viewQuizResult"
       >
         See Results
       </button>
@@ -116,6 +116,10 @@ const startQuiz = () => {
 
 const editQuiz = () => {
   router.push(`/admin/quiz-edit/${props.quiz.id}`);
+};
+
+const viewQuizResult = () => {
+  router.push(`/user/quiz-result/${props.quiz.id}`);
 };
 </script>
 

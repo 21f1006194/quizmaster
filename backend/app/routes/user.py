@@ -14,6 +14,8 @@ from app.services.user.quiz_service import (
     save_user_response,
     close_quiz_attempt,
     get_user_responses,
+    get_quiz_score,
+    get_full_quiz_result,
 )
 
 
@@ -256,9 +258,27 @@ class QuizAttemptStartStop(Resource):
             return {"msg": "Failed to submit quiz attempt"}, 500
 
 
+class QuizResult(Resource):
+    @jwt_required()
+    def get(self, quiz_id):
+        try:
+            username = get_jwt_identity()
+            user = User.query.filter_by(username=username).first()
+            result = get_full_quiz_result(user.id, quiz_id)
+            return result, 200
+        except ValueError as e:
+            return {"msg": str(e)}, 400
+        except Exception as e:
+            import traceback
+
+            traceback.print_exc()
+            return {"msg": "Failed to get quiz result"}, 500
+
+
 user_api.add_resource(ProfileInfo, "/profileinfo")
 user_api.add_resource(UserSubjects, "/subjects")
 user_api.add_resource(UserQuizzes, "/quizzes")
 user_api.add_resource(UserQuestions, "/quiz/<int:quiz_id>/questions")
 user_api.add_resource(QuizAttempt, "/quiz/<int:quiz_id>/attempt")
 user_api.add_resource(QuizAttemptStartStop, "/quiz/<int:quiz_id>")
+user_api.add_resource(QuizResult, "/quiz/<int:quiz_id>/result")

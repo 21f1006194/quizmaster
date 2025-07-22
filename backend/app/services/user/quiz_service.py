@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from app import db
 from app.models.quiz_attempt import QuizAttempt
 from app.models.user_response import UserResponse
+from app.services.catalog import get_questions_by_quiz
 
 
 def create_quiz_attempt(user_id, quiz_id):
@@ -104,3 +105,74 @@ def close_quiz_attempt(user_id, quiz_id):
     except Exception as e:
         db.session.rollback()
         raise e
+
+
+def get_quiz_score(user_id, quiz_id):
+    last_attempt = get_active_attempt(user_id, quiz_id)
+    if not last_attempt:
+        raise ValueError("No attempt found")
+    return {
+        "attempt_id": last_attempt.id,
+        "user_id": last_attempt.user_id,
+        "quiz_id": last_attempt.quiz_id,
+        "start_time": last_attempt.start_time.isoformat(),
+        "end_time": last_attempt.end_time.isoformat(),
+        "score": last_attempt.score,
+        "remarks": last_attempt.remarks,
+    }
+
+
+def get_full_quiz_result(user_id, quiz_id):
+    last_attempt = (
+        QuizAttempt.query.filter_by(user_id=user_id, quiz_id=quiz_id, in_progress=False)
+        .order_by(QuizAttempt.end_time.desc())
+        .first()
+    )
+    if not last_attempt:
+        raise ValueError("No attempt found")
+    responses = {}
+    for res in last_attempt.responses:
+        responses[res.question_id] = {
+            "question_id": res.question_id,
+            "selected_option_id": res.option_id,
+            "is_correct": res.option.is_correct,
+        }
+    questions = []
+    for q in get_questions_by_quiz(quiz_id):
+        questions.append(
+            {
+                "question_id": q.id,
+                "question": q.question,
+                "max_marks": q.max_marks,
+                "options": [
+                    {
+                        "option_id": opt.id,
+                        "option_text": opt.option_text,
+                        "is_correct": opt.is_correct,
+                        "is_selected": (
+                            False
+                            if q.id not in responses
+                            else (
+                                True
+                                if responses[q.id]["selected_option_id"] == opt.id
+                                else False
+                            )
+                        ),
+                    }
+                    for opt in q.options
+                ],
+                "is_attempted": q.id in responses,
+            }
+        )
+
+    result = {
+        "attempt_id": last_attempt.id,
+        "user_id": last_attempt.user_id,
+        "quiz_id": last_attempt.quiz_id,
+        "start_time": last_attempt.start_time.isoformat(),
+        "end_time": last_attempt.end_time.isoformat(),
+        "score": last_attempt.score,
+        "remarks": last_attempt.remarks,
+        "responses": questions,
+    }
+    return result
