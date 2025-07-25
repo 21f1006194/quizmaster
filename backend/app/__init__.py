@@ -7,11 +7,15 @@ from flask_restful import Api
 from flask_login import LoginManager
 from app.config import Config
 from flask_cors import CORS
+from flask_mail import Mail
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 jwt_manager = JWTManager()
+mail = Mail()
+
+# Celery app will be imported after app creation to avoid circular imports
 
 
 def create_app(config_class=Config):
@@ -28,7 +32,7 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     jwt_manager.init_app(app)
-
+    mail.init_app(app)
     login_manager.login_view = "public.login"
     login_manager.login_message = "Please log in to access this page"
 
@@ -43,12 +47,13 @@ def create_app(config_class=Config):
             "User": User,
         }
 
-    from app.routes import public_api_bp, admin_bp, user_bp, upload_bp
+    from app.routes import public_api_bp, admin_bp, user_bp, upload_bp, tasks_bp
 
     app.register_blueprint(public_api_bp, url_prefix="/api")
     app.register_blueprint(admin_bp, url_prefix="/admin/api")
     app.register_blueprint(user_bp, url_prefix="/user/api")
     app.register_blueprint(upload_bp, url_prefix="/upload/api")
+    app.register_blueprint(tasks_bp, url_prefix="/tasks/api")
 
     @app.errorhandler(500)
     def internal_error(error):

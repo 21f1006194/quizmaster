@@ -15,7 +15,9 @@ async-timeout==5.0.1
 billiard==4.2.1
     # via celery
 blinker==1.9.0
-    # via flask
+    # via
+    #   flask
+    #   flask-mail
 celery==5.4.0
     # via -r requirements.in
 certifi==2024.12.14
@@ -45,6 +47,7 @@ flask==3.1.0
     #   flask-cors
     #   flask-jwt-extended
     #   flask-login
+    #   flask-mail
     #   flask-migrate
     #   flask-restful
     #   flask-sqlalchemy
@@ -54,6 +57,8 @@ flask-cors==5.0.0
 flask-jwt-extended==4.7.1
     # via -r requirements.in
 flask-login==0.6.3
+    # via -r requirements.in
+flask-mail==0.10.0
     # via -r requirements.in
 flask-migrate==4.1.0
     # via -r requirements.in

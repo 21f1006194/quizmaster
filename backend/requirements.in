@@ -11,3 +11,5 @@ celery
 redis
 email-validator
 flask-cors
+Flask-Mail
+
