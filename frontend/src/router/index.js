@@ -82,6 +82,12 @@ const router = createRouter({
       component: () => import('../views/QuizResult.vue'),
       props: true
     },
+    {
+      path: '/user/result',
+      name: 'ResultView',
+      component: () => import('../views/ResultView.vue'),
+      meta: { requiresAuth: true, role: 'user' },
+    },
   ],
 })
 

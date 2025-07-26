@@ -43,7 +43,7 @@
                 <router-link class="nav-link" to="/user/home">Home</router-link>
               </li>
               <li class="nav-item">
-                <router-link class="nav-link" to="/user/score">Score</router-link>
+                <router-link class="nav-link" to="/user/result">Result</router-link>
               </li>
               <li class="nav-item">
                 <router-link class="nav-link" to="/user/summary">Summary</router-link>

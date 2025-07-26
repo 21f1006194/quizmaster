@@ -1,8 +1,7 @@
 from datetime import datetime, timezone
 from app import db
-from app.models.quiz_attempt import QuizAttempt
-from app.models.user_response import UserResponse
 from app.services.catalog import get_questions_by_quiz
+from app.models import Chapter, Quiz, Question, QuizAttempt, Option, UserResponse
 
 
 def create_quiz_attempt(user_id, quiz_id):
@@ -176,3 +175,75 @@ def get_full_quiz_result(user_id, quiz_id):
         "responses": questions,
     }
     return result
+
+
+def get_user_quiz_history(user_id):
+
+    attempts = (
+        QuizAttempt.query.filter_by(user_id=user_id, in_progress=False)
+        .order_by(QuizAttempt.end_time.desc())
+        .all()
+    )
+
+    history = []
+
+    for attempt in attempts:
+        # Get quiz details with eager loading to minimize DB queries
+        quiz = (
+            Quiz.query.options(db.joinedload(Quiz.chapter).joinedload(Chapter.subject))
+            .filter_by(id=attempt.quiz_id)
+            .first()
+        )
+
+        if not quiz:
+            continue
+
+        # Get total questions and max marks for this quiz
+        questions = Question.query.filter_by(quiz_id=quiz.id).all()
+        total_questions = len(questions)
+        max_marks = sum(q.max_marks for q in questions)
+
+        # Get user responses for this attempt
+        responses = UserResponse.query.filter_by(attempt_id=attempt.id).all()
+
+        # Calculate statistics
+        attempted_count = len([r for r in responses if r.is_attempted])
+        correct_count = 0
+        wrong_count = 0
+
+        for response in responses:
+            if response.is_attempted and response.option_id:
+                # Check if the selected option is correct
+                option = Option.query.get(response.option_id)
+                if option and option.is_correct:
+                    correct_count += 1
+                else:
+                    wrong_count += 1
+
+        # Create history object
+        history_item = {
+            # Quiz details
+            "quiz_id": quiz.id,
+            "subject_name": quiz.chapter.subject.name,
+            "chapter_name": quiz.chapter.name,
+            "quiz_title": quiz.title,
+            "quiz_date": quiz.quiz_date.isoformat() if quiz.quiz_date else None,
+            "total_questions": total_questions,
+            "max_marks": max_marks,
+            "time_duration": quiz.time_duration,
+            # Attempt details
+            "attempt_id": attempt.id,
+            "start_time": (
+                attempt.start_time.isoformat() if attempt.start_time else None
+            ),
+            "end_time": attempt.end_time.isoformat() if attempt.end_time else None,
+            "score": attempt.score,
+            "attempted_count": attempted_count,
+            "correct_count": correct_count,
+            "wrong_count": wrong_count,
+            "unattempted_count": total_questions - attempted_count,
+        }
+
+        history.append(history_item)
+
+    return history
