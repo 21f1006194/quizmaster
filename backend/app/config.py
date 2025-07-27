@@ -7,19 +7,21 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "4ce4ba18b8dedb84629da4be421c1d2d"
     JWT_SECRET_KEY = "edb84629da4be421c1d2d4ce4ba18b8d"
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     STATIC_FOLDER = "static"
     FILE_UPLOAD_FOLDER = "static/uploads/files"
     IMAGE_UPLOAD_FOLDER = "static/uploads/images"
+    EXPORT_FOLDER = "static/exports"
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     ALLOWED_FILE_EXTENSIONS = ["pdf"]
     ALLOWED_IMAGE_EXTENSIONS = ["png", "jpg", "jpeg", "gif"]
-
     MAIL_SERVER = "localhost"
     MAIL_PORT = 1025
     MAIL_USERNAME = None
     MAIL_PASSWORD = None
     MAIL_USE_TLS = False
     MAIL_USE_SSL = False
+    REDIS_URL = "redis://localhost:6379/0"
     # Celery Configuration
     CELERY_BROKER_URL = (
         os.environ.get("CELERY_BROKER_URL") or "redis://localhost:6379/0"
@@ -54,8 +56,9 @@ class Config:
 base_path = os.path.abspath(os.path.dirname(__file__))
 file_upload_folder = os.path.join(base_path, Config.FILE_UPLOAD_FOLDER)
 image_upload_folder = os.path.join(base_path, Config.IMAGE_UPLOAD_FOLDER)
+export_folder = os.path.join(base_path, Config.EXPORT_FOLDER)
 
-for folder in [file_upload_folder, image_upload_folder]:
+for folder in [file_upload_folder, image_upload_folder, export_folder]:
     if not os.path.exists(folder):
         os.makedirs(folder)
         print(f"Created {folder}")

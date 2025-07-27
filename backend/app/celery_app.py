@@ -1,23 +1,28 @@
 from celery import Celery
 
+# Create celery instance without importing create_app immediately
+celery_app = Celery(
+    "app",
+    backend="redis://localhost:6379/0",  # Use config values or defaults
+    broker="redis://localhost:6379/0",
+    include=["app.tasks.periodic", "app.tasks.user_tasks"],
+)
 
-def make_celery(app=None):
-    """Create and configure Celery app with Flask context."""
-    if app is None:
-        # Import here to avoid circular imports
-        from app import create_app
+# Configure with defaults - will be updated when Flask app is available
+celery_app.conf.update(
+    task_serializer="json",
+    accept_content=["json"],
+    result_serializer="json",
+    timezone="UTC",
+    enable_utc=True,
+)
 
-        app = create_app()
 
-    celery = Celery(
-        app.import_name,
+def init_celery(app):
+    """Initialize Celery with Flask app configuration."""
+    celery_app.conf.update(
         backend=app.config["CELERY_RESULT_BACKEND"],
         broker=app.config["CELERY_BROKER_URL"],
-        include=["app.tasks.periodic", "app.tasks.user_tasks"],
-    )
-
-    # Update configuration from Flask config
-    celery.conf.update(
         task_serializer=app.config["CELERY_TASK_SERIALIZER"],
         accept_content=app.config["CELERY_ACCEPT_CONTENT"],
         result_serializer=app.config["CELERY_RESULT_SERIALIZER"],
@@ -26,25 +31,12 @@ def make_celery(app=None):
         beat_schedule=app.config["CELERY_BEAT_SCHEDULE"],
     )
 
-    class ContextTask(celery.Task):
+    class ContextTask(celery_app.Task):
         """Make celery tasks work with Flask app context."""
 
         def __call__(self, *args, **kwargs):
             with app.app_context():
                 return self.run(*args, **kwargs)
 
-    celery.Task = ContextTask
-    return celery
-
-
-# Create celery instance - import here to avoid circular imports
-def get_celery_app():
-    """Get the celery app instance, creating it if necessary."""
-    from app import create_app
-
-    flask_app = create_app()
-    return make_celery(flask_app)
-
-
-# Create the celery app instance
-celery_app = get_celery_app()
+    celery_app.Task = ContextTask
+    return celery_app

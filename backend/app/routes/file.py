@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request, current_app, send_from_directory
 from flask_restful import Api, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
@@ -7,6 +7,9 @@ import hashlib
 
 upload_bp = Blueprint("upload_api", __name__)
 upload_api = Api(upload_bp)
+
+download_bp = Blueprint("download_api", __name__)
+download_api = Api(download_bp)
 
 
 def allowed_image(filename):
@@ -65,4 +68,11 @@ class UploadImage(Resource):
             return {"msg": f"Error uploading file: {str(e)}"}, 500
 
 
+class DownloadFile(Resource):
+    @jwt_required()
+    def get(self, filename):
+        return send_from_directory(current_app.config["EXPORT_FOLDER"], filename)
+
+
+download_api.add_resource(DownloadFile, "/<string:filename>")
 upload_api.add_resource(UploadImage, "/image")
