@@ -100,6 +100,12 @@ const router = createRouter({
       component: () => import('../views/AdminSummaryView.vue'),
       meta: { requiresAuth: true, role: 'admin' },
     },
+    {
+      path: '/leaderboard/:quizId',
+      name: 'Leaderboard',
+      component: () => import('../views/LeaderBoard.vue'),
+      props: true,
+    },
   ],
 })
 
