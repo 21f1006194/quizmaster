@@ -1,7 +1,8 @@
 <template>
   <div class="user-dashboard">
     <div class="welcome-section">
-      <h1>Hi, {{ user?.name || 'User' }}</h1>
+      <h1>Hi, {{ user}}</h1>
+            
     </div>
 
     <!-- Search Component -->
@@ -161,48 +162,92 @@ onMounted(() => {
 .user-dashboard {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2rem;
 }
 
 .welcome-section {
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.welcome-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .welcome-section h1 {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
 }
 
 .quizzes-section {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 2rem;
 }
 
 .loading-state,
 .error-state {
   text-align: center;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 20px;
   margin: 1rem 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  font-size: 1.2rem;
+  color: #666;
 }
 
 .error-state {
   color: #dc3545;
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border: 1px solid #f5c6cb;
 }
 
 .retry-btn {
   margin-top: 1rem;
-  padding: 8px 16px;
-  background-color: #6c757d;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(45deg, #6c757d 0%, #5a6268 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
 }
 
 .retry-btn:hover {
-  background-color: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+@media (max-width: 768px) {
+  .user-dashboard {
+    padding: 1.5rem;
+  }
+  
+  .welcome-section {
+    padding: 1.25rem;
+  }
+  
+  .welcome-section h1 {
+    font-size: 1.75rem;
+  }
+  
+  .loading-state,
+  .error-state {
+    padding: 2rem 1.5rem;
+    font-size: 1.1rem;
+  }
 }
 </style>

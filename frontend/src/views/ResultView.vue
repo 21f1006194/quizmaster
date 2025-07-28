@@ -75,6 +75,7 @@
         <ScoreTable 
           :quiz-history="filteredHistory"
           @view-result="viewResult"
+          @view-leaderboard="viewLeaderboard"
         />
       </div>
     </div>
@@ -249,6 +250,14 @@ const viewResult = (attemptId) => {
   }
 };
 
+// Navigate to leaderboard view
+const viewLeaderboard = (attemptId) => {
+  const attempt = quizHistory.value.find(a => a.attempt_id === attemptId);
+  if (attempt && attempt.quiz_id) {
+    router.push(`/leaderboard/${attempt.quiz_id}`);
+  }
+};
+
 // Load data on component mount
 onMounted(() => {
   loadQuizHistory();
@@ -278,18 +287,32 @@ onUnmounted(() => {
 
 .score-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.score-header:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .score-header h1 {
-  color: #2c3e50;
-  margin-bottom: 10px;
+  color: #333;
+  margin-bottom: 0.75rem;
   font-size: 2.5rem;
+  font-weight: 700;
 }
 
 .score-header p {
-  color: #7f8c8d;
+  color: #666;
   font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
 }
 
 .search-section {
@@ -328,17 +351,22 @@ onUnmounted(() => {
 
 .loading-state {
   text-align: center;
-  padding: 60px 20px;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  margin: 1rem 0;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid #667eea;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
+  margin: 0 auto 1.5rem;
 }
 
 @keyframes spin {
@@ -346,42 +374,62 @@ onUnmounted(() => {
   100% { transform: rotate(360deg); }
 }
 
+.loading-state p {
+  font-size: 1.2rem;
+  color: #666;
+  font-weight: 500;
+  margin: 0;
+}
+
 .error-state {
   text-align: center;
-  padding: 40px 20px;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  margin: 1rem 0;
 }
 
 .alert {
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
+  font-weight: 500;
 }
 
 .alert-danger {
-  background-color: #f8d7da;
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
 .retry-btn {
-  padding: 10px 20px;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 6px;
-  background-color: #3498db;
+  border-radius: 50px;
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .retry-btn:hover {
-  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .results-section {
-  margin-top: 20px;
+  margin-top: 1.5rem;
 }
 
 .results-summary {
@@ -393,7 +441,12 @@ onUnmounted(() => {
 
 .no-results {
   text-align: center;
-  padding: 60px 20px;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  margin: 1rem 0;
 }
 
 .no-results-content {
@@ -403,58 +456,111 @@ onUnmounted(() => {
 
 .no-results-content i {
   font-size: 4rem;
-  color: #bdc3c7;
-  margin-bottom: 20px;
+  color: #667eea;
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
 }
 
 .no-results-content h3 {
-  color: #2c3e50;
-  margin-bottom: 10px;
+  color: #333;
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .no-results-content p {
-  color: #7f8c8d;
-  line-height: 1.5;
+  color: #666;
+  line-height: 1.6;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
 }
 
 .download-btn {
-  background-color: #27ae60;
+  background: linear-gradient(45deg, #28a745 0%, #218838 100%);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 25px;
-  font-size: 1rem;
-  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 7px;
-  transition: background-color 0.3s ease, opacity 0.3s;
-  box-shadow: 0 2px 8px rgba(39, 174, 96, 0.08);
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
 }
+
+.download-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
 .download-btn:disabled {
-  background-color: #b2bec3;
+  background: linear-gradient(45deg, #6c757d 0%, #5a6268 100%);
   cursor: not-allowed;
   opacity: 0.7;
+  transform: none;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
 }
+
 .download-popup {
   position: absolute;
   right: 0;
   top: 110%;
-  background: #222;
+  background: #333;
   color: #fff;
-  padding: 8px 18px;
-  border-radius: 8px;
-  font-size: 0.98rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 15px;
+  font-size: 0.875rem;
+  font-weight: 500;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.13);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   z-index: 10;
-  opacity: 0.97;
+  opacity: 0.95;
+  border: 1px solid #444;
 }
+
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease;
 }
+
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .score-view {
+    padding: 1.5rem;
+  }
+  
+  .score-header {
+    padding: 1.5rem;
+  }
+  
+  .score-header h1 {
+    font-size: 2rem;
+  }
+  
+  .search-container {
+    padding: 1.25rem;
+  }
+  
+  .loading-state,
+  .error-state,
+  .no-results {
+    padding: 3rem 1.5rem;
+  }
+  
+  .search-input {
+    padding: 0.875rem 2.5rem 0.875rem 1.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .search-icon {
+    right: 2rem;
+    font-size: 1.1rem;
+  }
 }
 </style> 

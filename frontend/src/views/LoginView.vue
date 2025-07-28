@@ -70,8 +70,8 @@ const loginUser = async ()=>{
     const response = await api.post('/api/login', authData);
     const token = response.data.access_token;
     const role = response.data.role;
-    
-    authStore.login(token, role);
+    const user = response.data.user;
+    authStore.login(token, role, user);
     router.push(role === 'admin' ? '/admin/home' : '/user/home');
   }catch(error){
     alert('Login Failed!!');

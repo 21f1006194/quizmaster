@@ -99,28 +99,33 @@ watch(() => props.quizzes, () => {
 
 <style scoped>
 .quiz-section {
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 }
 
 .quiz-section h2 {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 15px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #333;
 }
 
 .quiz-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .no-quizzes {
   text-align: center;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 20px;
   margin: 1rem 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  color: #666;
+  font-size: 1.1rem;
 }
 
 /* Pagination Styles */
@@ -128,40 +133,47 @@ watch(() => props.quizzes, () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  margin-top: 20px;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .page-numbers {
   display: flex;
-  gap: 5px;
+  gap: 0.5rem;
 }
 
 .pagination-btn, 
 .page-btn {
-  padding: 8px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: white;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  background: white;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .pagination-btn:disabled {
-  background-color: #f5f5f5;
+  background: #f8f9fa;
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.6;
+  box-shadow: none;
 }
 
 .pagination-btn:not(:disabled):hover,
 .page-btn:hover {
-  background-color: #f5f5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
 }
 
 .page-btn.active {
-  background-color: #007bff;
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
   color: white;
-  border-color: #007bff;
+  border-color: #667eea;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
 }
 
 @media (max-width: 768px) {
@@ -173,24 +185,30 @@ watch(() => props.quizzes, () => {
     order: 2;
     width: 100%;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 1rem;
   }
   
   .pagination-btn {
     order: 1;
   }
+  
+  .quiz-section h2 {
+    font-size: 1.5rem;
+  }
 }
 
 .quiz-section.search-results {
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .result-count {
-  font-size: 16px;
-  color: #6c757d;
-  font-weight: normal;
-  margin-left: 10px;
+  font-size: 1rem;
+  color: #666;
+  font-weight: 500;
+  margin-left: 0.75rem;
 }
 </style> 

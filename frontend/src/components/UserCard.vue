@@ -92,38 +92,46 @@ const unblockUser = async (user_id) => {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  gap: 18px;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  gap: 1.5rem;
   min-width: 0;
   transition: all 0.3s ease;
   position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .user-card.user-blocked {
-  background-color: #fff5f5;
-  border-color: #fed7d7;
-  box-shadow: 0 2px 4px rgba(245, 101, 101, 0.1);
+  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+  border-color: #feb2b2;
+  box-shadow: 0 10px 30px rgba(245, 101, 101, 0.15);
 }
 
 .user-avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  background-color: #e9ecef;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 50%;
-  font-size: 28px;
+  font-size: 32px;
   flex-shrink: 0;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .user-blocked .user-avatar {
-  background-color: #fed7d7;
+  background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
   color: #c53030;
+  box-shadow: 0 4px 15px rgba(245, 101, 101, 0.2);
 }
 
 .user-details {
@@ -134,10 +142,10 @@ const unblockUser = async (user_id) => {
 }
 
 .user-details h3 {
-  font-size: 18px;
-  font-weight: 500;
-  margin-bottom: 4px;
-  color: #222;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
   word-break: break-word;
 }
 
@@ -146,9 +154,9 @@ const unblockUser = async (user_id) => {
 }
 
 .user-email {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #666;
-  margin-bottom: 2px;
+  margin-bottom: 0.25rem;
   word-break: break-all;
 }
 
@@ -157,22 +165,23 @@ const unblockUser = async (user_id) => {
 }
 
 .user-qualification {
-  font-size: 13px;
+  font-size: 0.875rem;
   color: #888;
-  margin-top: 2px;
+  margin-top: 0.25rem;
   font-style: italic;
 }
 
 .blocked-indicator {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #c53030;
-  font-weight: 500;
-  margin-top: 4px;
-  background-color: #fed7d7;
-  padding: 2px 8px;
-  border-radius: 12px;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
   display: inline-block;
   width: fit-content;
+  box-shadow: 0 2px 8px rgba(245, 101, 101, 0.2);
 }
 
 .user-actions {
@@ -181,19 +190,20 @@ const unblockUser = async (user_id) => {
 }
 
 .toggle-btn {
-  padding: 8px 16px;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   position: relative;
-  min-width: 80px;
-  height: 36px;
+  min-width: 100px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .toggle-btn:disabled {
@@ -202,30 +212,28 @@ const unblockUser = async (user_id) => {
 }
 
 .block-btn {
-  background-color: #dc3545;
+  background: linear-gradient(45deg, #dc3545 0%, #c82333 100%);
   color: white;
 }
 
 .block-btn:hover:not(:disabled) {
-  background-color: #c82333;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
 }
 
 .unblock-btn {
-  background-color: #28a745;
+  background: linear-gradient(45deg, #28a745 0%, #218838 100%);
   color: white;
 }
 
 .unblock-btn:hover:not(:disabled) {
-  background-color: #218838;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
 }
 
 .loading-spinner {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border: 2px solid transparent;
   border-top: 2px solid currentColor;
   border-radius: 50%;
@@ -241,13 +249,14 @@ const unblockUser = async (user_id) => {
   .user-card {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 1rem;
+    padding: 1rem;
   }
   
   .user-avatar {
-    width: 40px;
-    height: 40px;
-    font-size: 22px;
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
   }
   
   .user-actions {

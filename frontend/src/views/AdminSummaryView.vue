@@ -1,91 +1,93 @@
 <template>
-  <div class="admin-summary">
-    <h1 class="page-title">Admin Dashboard</h1>
-    
-    <div v-if="loading" class="loading">
-      <p>Loading analytics...</p>
-    </div>
-    
-    <div v-else-if="error" class="error">
-      <p>{{ error }}</p>
-    </div>
-    
-    <div v-else-if="quizHistory.length === 0" class="no-data">
-      <p>No quiz data available.</p>
-    </div>
-    
-    <div v-else class="dashboard-container">
-      <!-- Performance Overview Cards -->
-      <div class="overview-cards">
-        <div class="metric-card">
-          <div class="metric-value">{{ totalQuizzes }}</div>
-          <div class="metric-label">Total Quizzes</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value">{{ totalAttempts }}</div>
-          <div class="metric-label">Total Attempts</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value">{{ averageScore.toFixed(1) }}%</div>
-          <div class="metric-label">Average Score</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value">{{ totalTimeSpent.toFixed(1) }}min</div>
-          <div class="metric-label">Total Time Spent</div>
-        </div>
+  <div class="admin-summary-dashboard">
+    <div class="container">
+      <h1 class="dashboard-title">Admin Dashboard</h1>
+      
+      <div v-if="loading" class="loading-state">
+        <p>Loading analytics...</p>
       </div>
+      
+      <div v-else-if="error" class="error-state">
+        <p>{{ error }}</p>
+      </div>
+      
+      <div v-else-if="quizHistory.length === 0" class="no-data-state">
+        <p>No quiz data available.</p>
+      </div>
+      
+      <div v-else class="dashboard-container">
+        <!-- Performance Overview Cards -->
+        <div class="overview-cards">
+          <div class="metric-card">
+            <div class="metric-value">{{ totalQuizzes }}</div>
+            <div class="metric-label">Total Quizzes</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">{{ totalAttempts }}</div>
+            <div class="metric-label">Total Attempts</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">{{ averageScore.toFixed(1) }}%</div>
+            <div class="metric-label">Average Score</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">{{ totalTimeSpent.toFixed(1) }}min</div>
+            <div class="metric-label">Total Time Spent</div>
+          </div>
+        </div>
 
-      <!-- Charts Grid -->
-      <div class="charts-container">
-        <!-- Quiz Attempts per Subject -->
-        <div class="chart-section">
-          <div class="chart-header">
-            <h2>Quiz Attempts per Subject</h2>
-            <div class="info-button" title="Shows the total number of quiz attempts for each subject. Higher bars indicate more popular subjects with greater student engagement.">
-              <span>ⓘ</span>
+        <!-- Charts Grid -->
+        <div class="charts-container">
+          <!-- Quiz Attempts per Subject -->
+          <div class="chart-section">
+            <div class="chart-header">
+              <h2>Quiz Attempts per Subject</h2>
+              <div class="info-button" title="Shows the total number of quiz attempts for each subject. Higher bars indicate more popular subjects with greater student engagement.">
+                <span>ⓘ</span>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <canvas ref="performanceChart"></canvas>
             </div>
           </div>
-          <div class="chart-wrapper">
-            <canvas ref="performanceChart"></canvas>
-          </div>
-        </div>
-        
-        <!-- Mark Spread per Subject -->
-        <div class="chart-section">
-          <div class="chart-header">
-            <h2>Mark Spread per Subject</h2>
-            <div class="info-button" title="Displays the percentage score distribution (Max, Average, Min) for each subject. Helps identify which subjects have the highest/lowest performance and performance variability.">
-              <span>ⓘ</span>
+          
+          <!-- Mark Spread per Subject -->
+          <div class="chart-section">
+            <div class="chart-header">
+              <h2>Mark Spread per Subject</h2>
+              <div class="info-button" title="Displays the percentage score distribution (Max, Average, Min) for each subject. Helps identify which subjects have the highest/lowest performance and performance variability.">
+                <span>ⓘ</span>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <canvas ref="subjectChart"></canvas>
             </div>
           </div>
-          <div class="chart-wrapper">
-            <canvas ref="subjectChart"></canvas>
-          </div>
-        </div>
-        
-        <!-- Quiz Difficulty Analysis -->
-        <div class="chart-section">
-          <div class="chart-header">
-            <h2>Quiz Difficulty Analysis</h2>
-            <div class="info-button" title="Bubble chart showing quiz difficulty vs success rate. Larger bubbles indicate more attempts. Helps identify which quizzes are too easy/hard and need adjustment.">
-              <span>ⓘ</span>
+          
+          <!-- Quiz Difficulty Analysis -->
+          <div class="chart-section">
+            <div class="chart-header">
+              <h2>Quiz Difficulty Analysis</h2>
+              <div class="info-button" title="Bubble chart showing quiz difficulty vs success rate. Larger bubbles indicate more attempts. Helps identify which quizzes are too easy/hard and need adjustment.">
+                <span>ⓘ</span>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <canvas ref="difficultyChart"></canvas>
             </div>
           </div>
-          <div class="chart-wrapper">
-            <canvas ref="difficultyChart"></canvas>
-          </div>
-        </div>
-        
-        <!-- Top 3 Performers -->
-        <div class="chart-section">
-          <div class="chart-header">
-            <h2>Top 3 Performers</h2>
-            <div class="info-button" title="Shows the top 3 students who have topped the most number of quizzes. Helps identify consistently high-performing students across different subjects.">
-              <span>ⓘ</span>
+          
+          <!-- Top 3 Performers -->
+          <div class="chart-section">
+            <div class="chart-header">
+              <h2>Top 3 Performers</h2>
+              <div class="info-button" title="Shows the top 3 students who have topped the most number of quizzes. Helps identify consistently high-performing students across different subjects.">
+                <span>ⓘ</span>
+              </div>
             </div>
-          </div>
-          <div class="chart-wrapper">
-            <canvas ref="performersChart"></canvas>
+            <div class="chart-wrapper">
+              <canvas ref="performersChart"></canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -479,93 +481,116 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.admin-summary {
-  padding: 20px;
+.admin-summary-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem 0;
+}
+
+.container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
-.page-title {
+.dashboard-title {
   text-align: center;
   color: #333;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
   font-size: 2.5rem;
+  font-weight: 700;
 }
 
-.loading, .error, .no-data {
+.loading-state, .error-state, .no-data-state {
   text-align: center;
-  padding: 40px;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  margin: 1rem 0;
   font-size: 1.2rem;
   color: #666;
 }
 
-.error {
+.error-state {
   color: #d32f2f;
 }
 
 .dashboard-container {
-  margin-top: 20px;
+  margin-top: 2rem;
 }
 
 .overview-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .metric-card {
   background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
 }
 
 .metric-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .metric-value {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 2.5rem;
+  font-weight: 700;
   color: #333;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 
 .metric-label {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #666;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
 .charts-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  gap: 2rem;
 }
 
 .chart-section {
   background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.chart-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .chart-section h2 {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
   color: #333;
   font-size: 1.5rem;
   text-align: center;
+  font-weight: 600;
 }
 
 .chart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
 .chart-header h2 {
@@ -573,24 +598,27 @@ onMounted(async () => {
 }
 
 .info-button {
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: help;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .info-button:hover {
-  background-color: #e0e0e0;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .info-button span {
   font-size: 1.2rem;
-  color: #555;
+  color: white;
+  font-weight: 600;
 }
 
 .chart-wrapper {
@@ -603,30 +631,46 @@ onMounted(async () => {
 @media (max-width: 768px) {
   .charts-container {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 1.5rem;
   }
   
   .overview-cards {
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    gap: 1rem;
   }
   
   .chart-wrapper {
     height: 300px;
   }
   
-  .page-title {
+  .dashboard-title {
     font-size: 2rem;
   }
   
   .metric-value {
-    font-size: 1.5rem;
+    font-size: 2rem;
+  }
+  
+  .admin-summary-dashboard {
+    padding: 1rem 0;
+  }
+  
+  .container {
+    padding: 0 15px;
   }
 }
 
 @media (max-width: 480px) {
   .overview-cards {
     grid-template-columns: 1fr;
+  }
+  
+  .metric-card {
+    padding: 1.5rem;
+  }
+  
+  .chart-section {
+    padding: 1.5rem;
   }
 }
 </style>

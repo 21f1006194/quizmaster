@@ -86,43 +86,43 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="container">
+    <div class="admin-quiz-edit-container">
       <div v-if="quizDetails" class="selected-quiz">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="quiz-header">
           <h2>{{ quizDetails.quiz_title }}</h2>
-          <div class="d-flex gap-2">
-            <button class="btn btn-outline-primary" @click="showQuizModal = true">
+          <div class="quiz-actions">
+            <button class="action-btn edit-btn" @click="showQuizModal = true">
               <i class="bi bi-pencil-square"></i>
             </button>
-            <button class="btn btn-outline-danger" @click="deleteQuiz">
+            <button class="action-btn delete-btn" @click="deleteQuiz">
               <i class="bi bi-trash"></i>
             </button>
           </div>
         </div>
 
-        <div class="quiz-details mb-4">
-          <div class="row">
-            <div class="col-md-6">
+        <div class="quiz-details">
+          <div class="quiz-info-grid">
+            <div class="quiz-info-section">
               <p><strong>Subject:</strong> {{ quizDetails.subject_name }}</p>
               <p><strong>Chapter:</strong> {{ quizDetails.chapter_name }}</p>
               <p><strong>Date:</strong> {{ quizDetails.quiz_date }}</p>
             </div>
-            <div class="col-md-6">
+            <div class="quiz-info-section">
               <p><strong>Duration:</strong> {{ quizDetails.time_duration }} minutes</p>
               <p><strong>Total Questions:</strong> {{ questions.length }}</p>
               <p><strong>Total Marks:</strong> {{ questions.reduce((sum, q) => sum + q.max_marks, 0) }}</p>
             </div>
           </div>
-          <p v-if="quizDetails.remarks"><strong>Remarks:</strong> {{ quizDetails.remarks }}</p>
+          <p v-if="quizDetails.remarks" class="quiz-remarks"><strong>Remarks:</strong> {{ quizDetails.remarks }}</p>
         </div>
 
         <!-- Questions List -->
-        <div class="questions-container mb-4">
-          <div v-if="loadingQuestions" class="text-center py-3">
+        <div class="questions-container">
+          <div v-if="loadingQuestions" class="loading-state">
             Loading questions...
           </div>
           
-          <div v-else-if="questions.length === 0" class="text-center py-3">
+          <div v-else-if="questions.length === 0" class="no-questions-state">
             No questions added yet.
           </div>
           
@@ -130,19 +130,19 @@ onMounted(() => {
             <div v-for="(question, index) in questions" 
                  :key="question.id" 
                  class="question-item">
-              <div class="question-header d-flex justify-content-between align-items-center">
+              <div class="question-header">
                 <h5 v-html="question.question"></h5>
-                <div class="d-flex align-items-center gap-3">
-                  <span class="badge bg-primary">{{ question.max_marks }} marks</span>
+                <div class="question-actions">
+                  <span class="marks-badge">{{ question.max_marks }} marks</span>
                   <button 
-                    class="btn btn-link text-primary p-0" 
+                    class="action-btn edit-btn" 
                     @click.stop="handleEditClick(question)"
                     title="Edit question"
                   >
                     <i class="bi bi-pencil-square"></i>
                   </button>
                   <button 
-                    class="btn btn-link text-danger p-0" 
+                    class="action-btn delete-btn" 
                     @click.stop="deleteQuestion(question.id)"
                     title="Delete question"
                   >
@@ -151,7 +151,7 @@ onMounted(() => {
                 </div>
               </div>
               
-              <div class="options-list mt-2">
+              <div class="options-list">
                 <div v-for="option in question.options" 
                      :key="option.id"
                      :class="['option-item', { 'correct-option': option.is_correct }]">
@@ -159,16 +159,17 @@ onMounted(() => {
                 </div>
               </div>
               
-              <hr v-if="index < questions.length - 1" class="my-4">
+              <hr v-if="index < questions.length - 1" class="question-divider">
             </div>
           </div>
         </div>
 
-        <button class="btn btn-primary" @click="addQuestion">
-          <i class="bi bi-plus-circle me-2"></i>Add Question
+        <button class="add-question-btn" @click="addQuestion">
+          <i class="bi bi-plus-circle"></i>
+          Add Question
         </button>
       </div>
-      <div v-else class="no-quiz-selected">
+      <div v-else class="loading-state">
         Loading quiz details...
       </div>
   </div>
@@ -192,115 +193,279 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.admin-quiz-container {
+.admin-quiz-edit-container {
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.selected-quiz {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.selected-quiz:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.quiz-header {
   display: flex;
-  height: calc(100vh - 80px);
-  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.chapter-title {
-  margin-top: 15px;
-  padding: 8px 0;
-  border-bottom: 1px solid #dee2e6;
-  color: #495057;
+.quiz-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
 }
 
-.quiz-item {
-  padding: 8px 12px;
-  margin: 4px 0;
+.quiz-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.quiz-item:hover {
-  background-color: #e9ecef;
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-.quiz-item.active {
-  background-color: #0d6efd;
+.edit-btn {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
-.no-quiz-selected {
-  text-align: center;
-  color: #6c757d;
-  margin-top: 40px;
+.delete-btn {
+  background: linear-gradient(45deg, #dc3545 0%, #c82333 100%);
+  color: white;
 }
 
-.no-quizzes {
-  padding: 8px 12px;
-  color: #6c757d;
-  font-style: italic;
+.quiz-details {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.quiz-info-section p {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.quiz-info-section strong {
+  color: #667eea;
+  font-weight: 700;
+}
+
+.quiz-remarks {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.quiz-remarks strong {
+  color: #667eea;
+  font-weight: 700;
 }
 
 .questions-container {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.questions-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.loading-state, .no-questions-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  font-size: 1.2rem;
+  color: #666;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 15px;
+  border: 1px solid #e0e0e0;
 }
 
 .question-item {
-  padding: 10px 0;
+  padding: 1.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.question-item:hover {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin: 0 -1.5rem;
 }
 
 .question-header {
-  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
 }
 
 .question-header h5 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+  line-height: 1.5;
+}
+
+.question-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.marks-badge {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .options-list {
-  padding-left: 20px;
+  padding-left: 1.5rem;
 }
 
 .option-item {
-  padding: 8px 12px;
-  margin: 4px 0;
-  border-radius: 4px;
-  background-color: #f8f9fa;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.option-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .correct-option {
-  background-color: #d4edda;
+  background: linear-gradient(45deg, #d4edda 0%, #c3e6cb 100%);
   color: #155724;
   border-left: 4px solid #28a745;
+  font-weight: 700;
 }
 
-hr {
-  border-top: 1px solid #dee2e6;
+.question-divider {
+  border-top: 1px solid #f0f0f0;
+  margin: 2rem 0;
 }
 
-.badge {
-  font-size: 0.9rem;
-  padding: 6px 12px;
+.add-question-btn {
+  background: linear-gradient(45deg, #28a745 0%, #218838 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.btn-link {
-  text-decoration: none;
+.add-question-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
 }
 
-.btn-link:hover {
-  opacity: 0.8;
+.add-question-btn i {
+  font-size: 1.25rem;
 }
 
-.question-header .bi-pencil-square,
-.question-header .bi-trash {
-  font-size: 1.1rem;
-}
-
-.quiz-details {
-  background-color: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-}
-
-.quiz-details p {
-  margin-bottom: 0.5rem;
+@media (max-width: 768px) {
+  .admin-quiz-edit-container {
+    padding: 1.5rem;
+  }
+  
+  .selected-quiz {
+    padding: 1.5rem;
+  }
+  
+  .quiz-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .quiz-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .quiz-info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .question-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .question-actions {
+    align-self: flex-end;
+  }
+  
+  .questions-container {
+    padding: 1.5rem;
+  }
 }
 </style>

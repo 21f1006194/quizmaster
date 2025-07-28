@@ -390,84 +390,124 @@ onMounted(() => {
 
 <style scoped>
 .user-summary {
-  padding: 20px;
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: 100vh;
 }
 
 .page-title {
   text-align: center;
   color: #333;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
   font-size: 2.5rem;
+  font-weight: 700;
 }
 
 .loading, .error, .no-data {
   text-align: center;
-  padding: 40px;
+  padding: 3rem 2rem;
   font-size: 1.2rem;
   color: #666;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  margin: 1rem 0;
 }
 
 .error {
-  color: #d32f2f;
+  color: #dc3545;
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border: 1px solid #f5c6cb;
+}
+
+.no-data {
+  color: #666;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #e0e0e0;
 }
 
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  margin-top: 20px;
+  gap: 2rem;
+  margin-top: 1.5rem;
 }
 
 .overview-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.overview-cards:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .metric-card {
   text-align: center;
-  padding: 15px;
-  border-radius: 6px;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
+  padding: 1.5rem;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
 }
 
 .metric-value {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 10px rgba(102, 126, 234, 0.2);
 }
 
 .metric-label {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #666;
+  font-weight: 600;
 }
 
 .charts-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  margin-top: 20px;
+  gap: 2rem;
+  margin-top: 1.5rem;
 }
 
 .chart-section {
   background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.chart-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .chart-section h2 {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
   color: #333;
   font-size: 1.5rem;
+  font-weight: 700;
   text-align: center;
 }
 
@@ -484,18 +524,23 @@ onMounted(() => {
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .user-summary {
+    padding: 1.5rem;
+  }
+  
   .dashboard-container {
     flex-direction: column;
-    gap: 20px;
+    gap: 1.5rem;
   }
 
   .overview-cards {
     grid-template-columns: 1fr;
+    padding: 1.5rem;
   }
 
   .charts-container {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 1.5rem;
   }
   
   .chart-wrapper {
@@ -504,6 +549,10 @@ onMounted(() => {
   
   .page-title {
     font-size: 2rem;
+  }
+  
+  .chart-section {
+    padding: 1.5rem;
   }
 }
 </style>

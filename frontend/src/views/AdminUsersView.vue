@@ -1,30 +1,32 @@
 <template>
   <div class="admin-users-dashboard">
-    <div class="welcome-section">
-      <div class="welcome-header">
-        <h1>User Management</h1>
+    <div class="container">
+      <div class="welcome-section">
+        <div class="welcome-header">
+          <h1 class="dashboard-title">User Management</h1>
+        </div>
       </div>
-    </div>
 
-    <div class="search-section">
-      <input
-        v-model="searchQuery"
-        type="text"
-        class="user-search-bar"
-        placeholder="Search users by username, email, or full name..."
-        @input="filterUsers"
-      />
-    </div>
-
-    <div v-if="loading" class="loading-state">
-      <p>Loading users...</p>
-    </div>
-    <div v-else class="user-cards-section">
-      <div v-if="filteredUsers.length === 0" class="no-results">
-        <p>No users found.</p>
+      <div class="search-section">
+        <input
+          v-model="searchQuery"
+          type="text"
+          class="user-search-bar"
+          placeholder="Search users by username, email, or full name..."
+          @input="filterUsers"
+        />
       </div>
-      <div class="user-cards">
-        <UserCard v-for="user in filteredUsers" :key="user.id" :user="user" />
+
+      <div v-if="loading" class="loading-state">
+        <p>Loading users...</p>
+      </div>
+      <div v-else class="user-cards-section">
+        <div v-if="filteredUsers.length === 0" class="no-results">
+          <p>No users found.</p>
+        </div>
+        <div class="user-cards">
+          <UserCard v-for="user in filteredUsers" :key="user.id" :user="user" />
+        </div>
       </div>
     </div>
   </div>
@@ -79,80 +81,114 @@ onMounted(async () => {
 
 <style scoped>
 .admin-users-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem 0;
+}
+
+.container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 24px 16px 40px 16px;
+  padding: 0 20px;
+}
+
+.dashboard-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
 }
 
 .welcome-section {
-  margin-bottom: 28px;
+  margin-bottom: 2rem;
 }
 
 .welcome-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.welcome-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0;
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
 }
 
 .search-section {
-  margin-bottom: 24px;
+  margin-bottom: 2rem;
 }
 
 .user-search-bar {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 16px;
-  background-color: #f9f9f9;
-  transition: border-color 0.2s;
+  padding: 1rem 1.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 50px;
+  font-size: 1rem;
+  background-color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
 .user-search-bar:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #667eea;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+  transform: translateY(-1px);
 }
 
 .loading-state {
   text-align: center;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
   margin: 1rem 0;
 }
 
 .user-cards-section {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 1.5rem;
 }
 
 .user-cards {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 1.5rem;
 }
 
 .no-results {
   text-align: center;
-  color: #888;
-  margin-bottom: 18px;
+  color: #666;
+  margin-bottom: 1.5rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 2rem;
+  }
+  
   .admin-users-dashboard {
-    padding: 12px 4px 24px 4px;
+    padding: 1rem 0;
   }
-  .welcome-header h1 {
-    font-size: 22px;
+  
+  .welcome-header {
+    padding: 1rem;
   }
+  
+  .container {
+    padding: 0 15px;
+  }
+  
   .user-cards {
-    gap: 12px;
+    gap: 1rem;
   }
 }
 </style>

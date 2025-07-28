@@ -1,62 +1,64 @@
 <template>
-  <div class="user-dashboard">
-    <div class="welcome-section">
-      <div class="welcome-header">
-        <h1>Quiz Management</h1>
-        <button 
-          class="btn btn-primary new-quiz-btn"
-          @click="showCreateModal = true"
-        >
-          <i class="bi bi-plus-circle"></i>
-          New Quiz
-        </button>
+  <div class="admin-quiz-dashboard">
+    <div class="container">
+      <div class="welcome-section">
+        <div class="welcome-header">
+          <h1 class="dashboard-title">Quiz Management</h1>
+          <button 
+            class="btn btn-primary new-quiz-btn"
+            @click="showCreateModal = true"
+          >
+            <i class="bi bi-plus-circle"></i>
+            New Quiz
+          </button>
+        </div>
       </div>
+
+      <!-- Search Component -->
+      <QuizSearch 
+        v-if="!loading && !error"
+        :quizzes="allQuizzes"
+        :initial-search="searchQuery"
+      />
+
+      <div class="quizzes-section">
+        <div v-if="loading" class="loading-state">
+          <p>Loading quizzes...</p>
+        </div>
+
+        <div v-else-if="error" class="error-state">
+          <p>{{ error }}</p>
+          <button @click="loadQuizData" class="retry-btn">Retry</button>
+        </div>
+
+        <template v-else>
+          <QuizList
+            :quizzes="ongoingQuizzes"
+            section-title="Ongoing Quizzes"
+            section-type="ongoing"
+          />
+
+          <QuizList
+            :quizzes="upcomingQuizzes"
+            section-title="Upcoming Quizzes"
+            section-type="upcoming"
+          />
+
+          <QuizList
+            :quizzes="previousQuizzes"
+            section-title="Previous Quizzes"
+            section-type="previous"
+          />
+        </template>
+      </div>
+
+      <!-- Quiz Form Modal -->
+      <QuizFormModal
+        :show="showCreateModal"
+        mode="create"
+        @close="showCreateModal = false"
+      />
     </div>
-
-    <!-- Search Component -->
-    <QuizSearch 
-      v-if="!loading && !error"
-      :quizzes="allQuizzes"
-      :initial-search="searchQuery"
-    />
-
-    <div class="quizzes-section">
-      <div v-if="loading" class="loading-state">
-        <p>Loading quizzes...</p>
-      </div>
-
-      <div v-else-if="error" class="error-state">
-        <p>{{ error }}</p>
-        <button @click="loadQuizData" class="retry-btn">Retry</button>
-      </div>
-
-      <template v-else>
-        <QuizList
-          :quizzes="ongoingQuizzes"
-          section-title="Ongoing Quizzes"
-          section-type="ongoing"
-        />
-
-        <QuizList
-          :quizzes="upcomingQuizzes"
-          section-title="Upcoming Quizzes"
-          section-type="upcoming"
-        />
-
-        <QuizList
-          :quizzes="previousQuizzes"
-          section-title="Previous Quizzes"
-          section-type="previous"
-        />
-      </template>
-    </div>
-
-    <!-- Quiz Form Modal -->
-    <QuizFormModal
-      :show="showCreateModal"
-      mode="create"
-      @close="showCreateModal = false"
-    />
   </div>
 </template>
 
@@ -181,40 +183,54 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.user-dashboard {
+.admin-quiz-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem 0;
+}
+
+.container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px;
+}
+
+.dashboard-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
 }
 
 .welcome-section {
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 }
 
 .welcome-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.welcome-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0; /* Remove default margin to ensure proper alignment */
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
 }
 
 .quizzes-section {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 2rem;
 }
 
 .loading-state,
 .error-state {
   text-align: center;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
   margin: 1rem 0;
 }
 
@@ -224,21 +240,59 @@ onMounted(() => {
 
 .retry-btn {
   margin-top: 1rem;
-  padding: 8px 16px;
-  background-color: #6c757d;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .retry-btn:hover {
-  background-color: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .new-quiz-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.new-quiz-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 2rem;
+  }
+  
+  .admin-quiz-dashboard {
+    padding: 1rem 0;
+  }
+  
+  .welcome-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .container {
+    padding: 0 15px;
+  }
 }
 </style>

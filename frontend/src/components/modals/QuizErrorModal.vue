@@ -1,9 +1,9 @@
 <template>
   <div v-if="isVisible" class="modal-overlay">
     <div class="modal-content">
-      <h3>{{ title }}</h3>
-      <p>{{ message }}</p>
-      <button @click="closeModal">Close</button>
+      <h3 class="modal-title">{{ title }}</h3>
+      <p class="modal-message">{{ message }}</p>
+      <button @click="closeModal" class="modal-button">Close</button>
     </div>
   </div>
 </template>
@@ -44,26 +44,48 @@ const closeModal = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1050;
 }
 
 .modal-content {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 2rem;
+  border-radius: 20px;
   text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid #f0f0f0;
+  max-width: 400px;
+  width: 90%;
 }
 
-button {
-  margin-top: 15px;
-  padding: 10px 15px;
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.modal-message {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.modal-button {
+  margin-top: 0;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 4px;
-  background-color: #4CAF50;
+  border-radius: 50px;
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
   color: white;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-button:hover {
-  background-color: #45a049;
+.modal-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 </style>

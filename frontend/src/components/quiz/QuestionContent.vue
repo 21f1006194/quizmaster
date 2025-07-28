@@ -210,33 +210,78 @@ defineExpose({
 .question-section {
   flex: 1;
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.question-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.question-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.question-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
 }
 
 .options {
-  margin: 20px 0;
+  margin: 2rem 0;
 }
 
 .option {
-  margin: 10px 0;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  margin: 1rem 0;
+  padding: 1rem 1.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
+}
+
+.option input[type="radio"] {
+  margin-right: 0.75rem;
+  transform: scale(1.2);
+  accent-color: #667eea;
+}
+
+.option label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  line-height: 1.5;
 }
 
 .navigation-buttons {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 2rem;
 }
 
 .right-buttons {
   display: flex;
-  gap: 8px;
+  gap: 0.75rem;
   align-items: center;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -244,76 +289,125 @@ defineExpose({
 }
 
 .nav-btn {
-  padding: 8px 15px;
-  font-size: 14px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.nav-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .nav-btn.primary {
-  background-color: #4CAF50;
+  background: linear-gradient(45deg, #28a745 0%, #218838 100%);
   color: white;
 }
 
 .nav-btn.review {
-  background-color: #2196F3;
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
 .nav-btn.review.active {
-  background-color: #1976D2;
-  border: 2px solid #1565C0;
+  background: linear-gradient(45deg, #495057 0%, #343a40 100%);
+  border: 2px solid #212529;
+  box-shadow: 0 6px 20px rgba(73, 80, 87, 0.3);
+}
+
+.nav-btn.clear {
+  background: linear-gradient(45deg, #6c757d 0%, #5a6268 100%);
+  color: white;
 }
 
 .nav-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
-  background-color: #ccc;
+  background: #f8f9fa;
+  color: #6c757d;
+  box-shadow: none;
 }
 
 .nav-btn.primary:disabled {
-  background-color: #88c98a;
+  background: #e9ecef;
+  color: #6c757d;
 }
 
 .nav-btn.review:disabled {
-  background-color: #90caf9;
+  background: #e9ecef;
+  color: #6c757d;
 }
 
 .nav-btn.icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  background-color: #f5f5f5;
+  font-size: 1.25rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   color: #333;
-  transition: all 0.2s;
+  border: 1px solid #e0e0e0;
 }
 
 .nav-btn.icon-btn:hover:not(:disabled) {
-  background-color: #e0e0e0;
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  transform: scale(1.05);
 }
 
 .nav-btn.icon-btn:disabled {
-  background-color: #f5f5f5;
-  color: #ccc;
+  background: #f8f9fa;
+  color: #adb5bd;
+  border-color: #e9ecef;
 }
 
 .finish-section {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #f0f0f0;
   text-align: center;
 }
 
 .nav-btn.finish {
-  background-color: #ff5722;
+  background: linear-gradient(45deg, #dc3545 0%, #c82333 100%);
   color: white;
-  padding: 12px 30px;
-  font-size: 16px;
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .question-section {
+    padding: 1.5rem;
+  }
+  
+  .right-buttons {
+    min-width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .navigation-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .nav-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8rem;
+  }
+  
+  .nav-btn.icon-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
 }
 </style> 

@@ -31,7 +31,11 @@ class Login(Resource):
                 role = "admin" if user.is_admin else "user"
                 if user.is_blocked:
                     return {"msg": "User is blocked. Please contact admin."}, 403
-                return {"access_token": token, "role": role}, 200
+                return {
+                    "access_token": token,
+                    "role": role,
+                    "user": user.full_name,
+                }, 200
 
             return {"msg": "Bad username or password"}, 401
         except Exception as e:
