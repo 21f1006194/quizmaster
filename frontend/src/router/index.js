@@ -88,6 +88,18 @@ const router = createRouter({
       component: () => import('../views/ResultView.vue'),
       meta: { requiresAuth: true, role: 'user' },
     },
+    {
+      path: '/user/summary',
+      name: 'UserSummaryView',
+      component: () => import('../views/UserSummaryView.vue'),
+      meta: { requiresAuth: true, role: 'user' },
+    },
+    {
+      path: '/admin/summary',
+      name: 'AdminSummaryView',
+      component: () => import('../views/AdminSummaryView.vue'),
+      meta: { requiresAuth: true, role: 'admin' },
+    },
   ],
 })
 
