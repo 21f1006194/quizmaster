@@ -39,6 +39,7 @@ from app.services.admin.user_admin_service import (
     block_user,
     unblock_user,
 )
+from app.services.admin.quiz_admin_service import get_all_quiz_summary
 
 admin_bp = Blueprint("admin_api", __name__)
 admin_api = Api(admin_bp)
@@ -459,6 +460,14 @@ class UnblockUser(Resource):
         return {"msg": "User unblocked successfully"}, 200
 
 
+# ------------------ Quiz Summary Endpoints ------------------
+class AllQuizSummary(Resource):
+    @admin_required
+    def get(self):
+        summary = get_all_quiz_summary()
+        return summary, 200
+
+
 # ------------------ Route Registrations ------------------
 admin_api.add_resource(SubjectList, "/subjects")
 admin_api.add_resource(SubjectDetail, "/subjects/<int:subject_id>")
@@ -476,3 +485,5 @@ admin_api.add_resource(QuestionDetail, "/questions/<int:question_id>")
 admin_api.add_resource(UserDetails, "/all_users")
 admin_api.add_resource(BlockUser, "/block_user/<int:user_id>")
 admin_api.add_resource(UnblockUser, "/unblock_user/<int:user_id>")
+
+admin_api.add_resource(AllQuizSummary, "/quiz_summary")

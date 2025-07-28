@@ -31,13 +31,14 @@
       >
         Edit Quiz
       </button>
-      <button 
-        v-else
-        class="action-btn results"
-        @click="$emit('view-results', quiz.id)"
-      >
-        See Results
-      </button>
+      <div v-else-if="effectiveQuizState === 'previous'" class="action-buttons">
+        <button 
+          class="action-btn leaderboard"
+          @click="viewLeaderboard"
+        >
+          Leaderboard
+        </button>
+      </div>
     </template>
 
     <!-- User View -->
@@ -56,13 +57,20 @@
       >
         Set Reminder
       </button>
-      <button 
-        v-else
-        class="action-btn results"
-        @click="viewQuizResult"
-      >
-        See Results
-      </button>
+      <div v-else class="action-buttons">
+        <button 
+          class="action-btn results"
+          @click="viewQuizResult"
+        >
+          Results
+        </button>
+        <button 
+          class="action-btn leaderboard"
+          @click="viewLeaderboard"
+        >
+          Leaderboard
+        </button>
+      </div>
     </template>
   </div>
 </template>
@@ -120,6 +128,10 @@ const editQuiz = () => {
 
 const viewQuizResult = () => {
   router.push(`/user/quiz-result/${props.quiz.id}`);
+};
+
+const viewLeaderboard = () => {
+  router.push(`/leaderboard/${props.quiz.id}`);
 };
 </script>
 
@@ -203,6 +215,17 @@ const viewQuizResult = () => {
   color: black;
 }
 
+.action-btn.leaderboard {
+  background-color: #007bff;
+  color: white;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 768px) {
   .quiz-item {
     flex-direction: column;
@@ -211,6 +234,10 @@ const viewQuizResult = () => {
   }
   
   .action-btn {
+    align-self: flex-end;
+  }
+
+  .action-buttons {
     align-self: flex-end;
   }
 }

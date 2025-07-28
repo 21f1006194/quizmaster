@@ -8,6 +8,7 @@ from app.services.catalog import (
     get_all_quizzes,
     get_questions_by_quiz,
     get_quiz_by_id,
+    get_leaderboard_by_quiz_id,
 )
 from app.services.user.quiz_service import (
     create_quiz_attempt,
@@ -303,6 +304,16 @@ class DownloadHistory(Resource):
             return {"msg": "Failed to trigger CSV download"}, 500
 
 
+class Leaderboard(Resource):
+    @jwt_required()
+    def get(self, quiz_id):
+        try:
+            leaderboard = get_leaderboard_by_quiz_id(quiz_id)
+            return leaderboard, 200
+        except Exception as e:
+            return {"msg": "Failed to get leaderboard"}, 500
+
+
 user_api.add_resource(ProfileInfo, "/profileinfo")
 user_api.add_resource(UserSubjects, "/subjects")
 user_api.add_resource(UserQuizzes, "/quizzes")
@@ -312,3 +323,4 @@ user_api.add_resource(QuizAttemptStartStop, "/quiz/<int:quiz_id>")
 user_api.add_resource(QuizResult, "/quiz/<int:quiz_id>/result")
 user_api.add_resource(UserQuizHistory, "/quiz/history")
 user_api.add_resource(DownloadHistory, "/quiz/history/download")
+user_api.add_resource(Leaderboard, "/quiz/<int:quiz_id>/leaderboard")
