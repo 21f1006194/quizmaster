@@ -8,6 +8,8 @@ from flask_login import LoginManager
 from app.config import Config
 from flask_cors import CORS
 from flask_mail import Mail
+from flask_sse import sse
+from app.celery_app import init_celery
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -47,13 +49,18 @@ def create_app(config_class=Config):
             "User": User,
         }
 
-    from app.routes import public_api_bp, admin_bp, user_bp, upload_bp, tasks_bp
+    from app.routes import public_api_bp, admin_bp, user_bp, upload_bp, download_bp
 
     app.register_blueprint(public_api_bp, url_prefix="/api")
     app.register_blueprint(admin_bp, url_prefix="/admin/api")
     app.register_blueprint(user_bp, url_prefix="/user/api")
-    app.register_blueprint(upload_bp, url_prefix="/upload/api")
-    app.register_blueprint(tasks_bp, url_prefix="/tasks/api")
+    app.register_blueprint(upload_bp, url_prefix="/upload/")
+    app.register_blueprint(download_bp, url_prefix="/download/")
+
+    app.register_blueprint(sse, url_prefix="/stream")
+
+    # Initialize Celery
+    celery = init_celery(app)
 
     @app.errorhandler(500)
     def internal_error(error):

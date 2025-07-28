@@ -64,3 +64,10 @@ Thumbs.db
 
 # Static uploaded files
 backend/static/uploads
+backend/static/exports
+backend/app/static/uploads
+backend/app/static/exports
+
+
+celerybeat-schedule
+celerybeat.pid

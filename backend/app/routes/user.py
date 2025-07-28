@@ -16,8 +16,10 @@ from app.services.user.quiz_service import (
     get_user_responses,
     get_quiz_score,
     get_full_quiz_result,
+    get_user_quiz_history,
 )
 
+from app.tasks.user_tasks import export_user_data_csv
 
 user_bp = Blueprint("user_api", __name__)
 
@@ -275,6 +277,32 @@ class QuizResult(Resource):
             return {"msg": "Failed to get quiz result"}, 500
 
 
+class UserQuizHistory(Resource):
+    @jwt_required()
+    def get(self):
+        try:
+            username = get_jwt_identity()
+            user = User.query.filter_by(username=username).first()
+            history = get_user_quiz_history(user.id)
+            return history, 200
+        except Exception as e:
+            return {"msg": "Failed to get quiz history"}, 500
+
+
+class DownloadHistory(Resource):
+    @jwt_required()
+    def post(self):
+        try:
+            username = get_jwt_identity()
+            user = User.query.filter_by(username=username).first()
+            # trigger csv download
+            response = export_user_data_csv.delay(user.id)
+            print(f"Task ID: {response.id}")
+            return {"msg": "CSV download triggered", "task_id": response.id}, 200
+        except Exception as e:
+            return {"msg": "Failed to trigger CSV download"}, 500
+
+
 user_api.add_resource(ProfileInfo, "/profileinfo")
 user_api.add_resource(UserSubjects, "/subjects")
 user_api.add_resource(UserQuizzes, "/quizzes")
@@ -282,3 +310,5 @@ user_api.add_resource(UserQuestions, "/quiz/<int:quiz_id>/questions")
 user_api.add_resource(QuizAttempt, "/quiz/<int:quiz_id>/attempt")
 user_api.add_resource(QuizAttemptStartStop, "/quiz/<int:quiz_id>")
 user_api.add_resource(QuizResult, "/quiz/<int:quiz_id>/result")
+user_api.add_resource(UserQuizHistory, "/quiz/history")
+user_api.add_resource(DownloadHistory, "/quiz/history/download")

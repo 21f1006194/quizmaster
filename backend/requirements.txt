@@ -51,6 +51,7 @@ flask==3.1.0
     #   flask-migrate
     #   flask-restful
     #   flask-sqlalchemy
+    #   flask-sse
     #   flask-wtf
 flask-cors==5.0.0
     # via -r requirements.in
@@ -68,6 +69,8 @@ flask-sqlalchemy==3.1.1
     # via
     #   -r requirements.in
     #   flask-migrate
+flask-sse==1.0.0
+    # via -r requirements.in
 flask-wtf==1.2.2
     # via -r requirements.in
 greenlet==3.1.1
@@ -92,23 +95,34 @@ markupsafe==3.0.2
     #   mako
     #   werkzeug
     #   wtforms
+numpy==2.2.6
+    # via pandas
+pandas==2.3.1
+    # via -r requirements.in
 prompt-toolkit==3.0.50
     # via click-repl
 pyjwt==2.10.1
     # via flask-jwt-extended
 python-dateutil==2.9.0.post0
-    # via celery
+    # via
+    #   celery
+    #   pandas
 python-dotenv==1.0.1
     # via -r requirements.in
 pytz==2024.2
-    # via flask-restful
+    # via
+    #   flask-restful
+    #   pandas
 redis==5.2.1
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   flask-sse
 requests==2.32.3
     # via -r requirements.in
 six==1.17.0
     # via
     #   flask-restful
+    #   flask-sse
     #   python-dateutil
 sqlalchemy==2.0.37
     # via
@@ -122,6 +136,7 @@ tzdata==2024.2
     # via
     #   celery
     #   kombu
+    #   pandas
 urllib3==2.3.0
     # via requests
 vine==5.1.0
