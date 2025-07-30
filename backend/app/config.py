@@ -1,5 +1,6 @@
 import os
 from celery.schedules import crontab
+from datetime import timedelta
 
 
 class Config:
@@ -11,6 +12,7 @@ class Config:
     JWT_SECRET_KEY = (
         os.environ.get("JWT_SECRET_KEY") or "edb84629da4be421c1d2d4ce4ba18b8d"
     )
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=12)
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     STATIC_FOLDER = "static"
     FILE_UPLOAD_FOLDER = "static/uploads/files"
