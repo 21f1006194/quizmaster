@@ -14,3 +14,4 @@ flask-cors
 Flask-Mail
 pandas
 flask-sse
+Flask-Caching

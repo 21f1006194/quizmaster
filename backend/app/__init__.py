@@ -9,14 +9,16 @@ from app.config import Config
 from flask_cors import CORS
 from flask_mail import Mail
 from flask_sse import sse
+from flask_caching import Cache
 from app.celery_app import init_celery
+
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 jwt_manager = JWTManager()
 mail = Mail()
-
+cache = Cache()
 # Celery app will be imported after app creation to avoid circular imports
 
 
@@ -35,6 +37,7 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     jwt_manager.init_app(app)
     mail.init_app(app)
+    cache.init_app(app)
     login_manager.login_view = "public.login"
     login_manager.login_message = "Please log in to access this page"
 

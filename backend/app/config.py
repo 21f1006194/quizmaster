@@ -22,6 +22,12 @@ class Config:
     MAIL_USE_TLS = False
     MAIL_USE_SSL = False
     REDIS_URL = "redis://localhost:6379/0"
+    CACHE_TYPE = "RedisCache"
+    CACHE_REDIS_HOST = "localhost"
+    CACHE_REDIS_PORT = 6379
+    CACHE_REDIS_PASSWORD = None
+    CACHE_REDIS_DB = 0
+    CACHE_DEFAULT_TIMEOUT = 300
     # Celery Configuration
     CELERY_BROKER_URL = (
         os.environ.get("CELERY_BROKER_URL") or "redis://localhost:6379/0"

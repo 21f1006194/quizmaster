@@ -1,6 +1,7 @@
 from app.models.question import Question
 from app.models.option import Option
-from app import db
+from app import db, cache
+from app.services.catalog.question_service import get_questions_by_quiz
 
 
 def create_question(quiz_id, data):
@@ -22,11 +23,13 @@ def create_question(quiz_id, data):
         db.session.add(option)
 
     db.session.commit()
+    cache.delete_memoized(get_questions_by_quiz, quiz_id)
     return question
 
 
 def update_question(question_id, data):
     question = Question.query.get(question_id)
+    quiz_id = question.quiz_id
     if not question:
         return None
 
@@ -50,12 +53,14 @@ def update_question(question_id, data):
             db.session.add(new_option)
 
     db.session.commit()
+    cache.delete_memoized(get_questions_by_quiz, quiz_id)
     return question
 
 
 def delete_question(question_id):
 
     question = Question.query.get(question_id)
+    quiz_id = question.quiz_id
     if not question:
         return False
 
@@ -65,4 +70,5 @@ def delete_question(question_id):
 
     db.session.delete(question)
     db.session.commit()
+    cache.delete_memoized(get_questions_by_quiz, quiz_id)
     return True
