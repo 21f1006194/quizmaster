@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import api from '@/api';
 import { fetchCatalogData } from '@/utils/catalogData';
 import SubjectFormModal from '@/components/modals/SubjectFormModal.vue';
 import ChapterFormModal from '@/components/modals/ChapterFormModal.vue';
@@ -45,6 +46,7 @@ const deleteChapter = async (chapterId) => {
 
 const deleteSubject = async (subjectId) => {
   try {
+    console.log(`Deleting subject: ${subjectId}`);
     const response = await api.delete(`/admin/api/subjects/${subjectId}`);
     if (response.status === 200) {
       await loadData();
