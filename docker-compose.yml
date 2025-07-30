@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  # Redis service for caching and message broker
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # MailHog for email testing
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP
+    restart: unless-stopped
+
+  # Backend Flask application
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: flask_app
+    ports:
+      - "5000:5000"
+    volumes:
+      - sqlite_data:/app/instance
+      - static_data:/app/static
+    environment:
+      - TZ=Asia/Kolkata
+      - FLASK_ENV=development
+      - FLASK_APP=run.py
+      - SECRET_KEY=88b725bbfc8b1aebd0c60672eff629ff
+      - JWT_SECRET_KEY=52c800c628362f7c8a06b6e0e368ec61
+      - SQLALCHEMY_DATABASE_URI=sqlite:///site.db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - REDIS_URL=redis://redis:6379/0
+      - CACHE_REDIS_HOST=redis
+      - CACHE_REDIS_PORT=6379
+      - MAIL_SERVER=mailhog
+      - MAIL_PORT=1025
+      - MAIL_USE_TLS=false
+      - MAIL_USE_SSL=false
+    depends_on:
+      - redis
+      - mailhog
+    restart: unless-stopped
+    command: bash scripts/start.sh
+
+  # Celery worker for background tasks
+  celery:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: celery_worker
+    volumes:
+      - sqlite_data:/app/instance
+      - static_data:/app/static
+    environment:
+      - TZ=Asia/Kolkata
+      - FLASK_ENV=development
+      - FLASK_APP=run.py
+      - SECRET_KEY=88b725bbfc8b1aebd0c60672eff629ff
+      - JWT_SECRET_KEY=52c800c628362f7c8a06b6e0e368ec61
+      - SQLALCHEMY_DATABASE_URI=sqlite:///site.db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - REDIS_URL=redis://redis:6379/0
+      - CACHE_REDIS_HOST=redis
+      - CACHE_REDIS_PORT=6379
+      - MAIL_SERVER=mailhog
+      - MAIL_PORT=1025
+      - MAIL_USE_TLS=false
+      - MAIL_USE_SSL=false
+    depends_on:
+      - redis
+      - backend
+      - mailhog
+    restart: unless-stopped
+    command: celery -A celery_worker.celery_app worker --loglevel=info
+
+  # Celery Beat for scheduled tasks (optional)
+  celery-beat:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: celery_beat
+    volumes:
+      - sqlite_data:/app/instance
+      - static_data:/app/static
+    environment:
+      - TZ=Asia/Kolkata
+      - FLASK_ENV=development
+      - FLASK_APP=run.py
+      - SECRET_KEY=88b725bbfc8b1aebd0c60672eff629ff
+      - JWT_SECRET_KEY=52c800c628362f7c8a06b6e0e368ec61
+      - SQLALCHEMY_DATABASE_URI=sqlite:///site.db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - REDIS_URL=redis://redis:6379/0
+      - CACHE_REDIS_HOST=redis
+      - CACHE_REDIS_PORT=6379
+      - MAIL_SERVER=mailhog
+      - MAIL_PORT=1025
+      - MAIL_USE_TLS=false
+      - MAIL_USE_SSL=false
+    depends_on:
+      - redis
+      - backend
+      - mailhog
+    restart: unless-stopped
+    command: celery -A celery_worker.celery_app beat --loglevel=info
+
+  # Frontend Vue.js application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vue_frontend
+    ports:
+      - "5173:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_BASE_URL=http://localhost:5000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  sqlite_data:
+  static_data:
