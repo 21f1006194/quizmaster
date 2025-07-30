@@ -71,7 +71,12 @@ class UploadImage(Resource):
 class DownloadFile(Resource):
     @jwt_required()
     def get(self, filename):
-        return send_from_directory(current_app.config["EXPORT_FOLDER"], filename)
+        backend_path = os.path.dirname(current_app.config["BASE_DIR"])
+        export_folder = current_app.config["EXPORT_FOLDER"]
+        export_path = os.path.join(backend_path, export_folder)
+        print(f"Export path: {export_path}")
+        print(f"File exists: {os.path.exists(export_path)}")
+        return send_from_directory(export_path, filename)
 
 
 download_api.add_resource(DownloadFile, "/<string:filename>")

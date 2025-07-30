@@ -12,6 +12,6 @@ WORKER_PID=$!
 echo "Worker with Beat PID: $WORKER_PID"
 
 # Stopping all processes
-trap "echo 'Stopping...'; kill $WORKER_PID; celery -A app.celery_app:celery_app purge -f; exit" INT
+trap "echo 'Stopping...'; kill $WORKER_PID; celery -A celery_worker.celery_app purge -f; exit" INT
 
 wait $WORKER_PID

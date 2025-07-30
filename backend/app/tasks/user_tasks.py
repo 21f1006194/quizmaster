@@ -16,7 +16,9 @@ def export_user_data_csv(self, user_id, export_type="complete"):
         # get the BASE_DIR from the config
         base_dir = current_app.config["BASE_DIR"]
         export_folder = current_app.config["EXPORT_FOLDER"]
-        export_path = os.path.join(base_dir, export_folder)
+        # Use the same logic as Flask app initialization to ensure consistency
+        backend_dir = os.path.dirname(base_dir)  # Go up one level from app to backend
+        export_path = os.path.join(backend_dir, export_folder)
         data = get_user_quiz_history(user_id)
 
         print("Starting CSV export")

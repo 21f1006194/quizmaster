@@ -1,10 +1,15 @@
+import os
 from celery import Celery
 
-# Create celery instance without importing create_app immediately
+# Get broker URL from environment with localhost default
+broker_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
+result_backend = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
+
+# Create celery instance with environment-aware configuration
 celery_app = Celery(
     "app",
-    backend="redis://localhost:6379/0",  # Use config values or defaults
-    broker="redis://localhost:6379/0",
+    backend=result_backend,
+    broker=broker_url,
     include=["app.tasks.periodic", "app.tasks.user_tasks"],
 )
 
