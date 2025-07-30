@@ -56,7 +56,7 @@ const features = [
             <span class="highlight">Quiz Master</span>
           </h1>
           <p class="hero-subtitle">
-            An intelligent quiz platform designed to enhance your learning experience with 
+            A quiz platform designed to enhance your learning experience with 
             personalized analytics, progress tracking, and competitive features.
           </p>
           <div class="hero-buttons">

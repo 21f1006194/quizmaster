@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 from sqlalchemy.orm import validates
+import os
 
 
 class Quiz(db.Model):
@@ -17,7 +18,8 @@ class Quiz(db.Model):
 
     @validates("quiz_date")
     def validate_quiz_date(self, key, quiz_date):
-        if quiz_date < datetime.now():
+        is_demo = os.getenv("IS_DEMO")
+        if not is_demo and quiz_date < datetime.now():
             raise ValueError("Quiz date should be in the future")
         return quiz_date
 
