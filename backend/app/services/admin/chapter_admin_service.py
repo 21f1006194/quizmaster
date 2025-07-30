@@ -1,5 +1,7 @@
 from app.models.chapter import Chapter
 from app import db
+from app import cache
+from app.services.catalog.chapter_service import get_chapters_by_subject
 
 
 def create_chapter(subject_id, data):
@@ -11,6 +13,7 @@ def create_chapter(subject_id, data):
     )
     db.session.add(chapter)
     db.session.commit()
+    cache.delete_memoized(get_chapters_by_subject, subject_id)
     return chapter
 
 
@@ -22,11 +25,13 @@ def update_chapter(chapter_id, data):
     chapter.name = data.get("name", chapter.name)
     chapter.description = data.get("description", chapter.description)
     db.session.commit()
+    cache.delete_memoized(get_chapters_by_subject, chapter.subject_id)
     return chapter
 
 
 def delete_chapter(chapter_id):
     chapter = Chapter.query.get(chapter_id)
+    sub_id = chapter.subject_id
     if not chapter:
         return {"success": False, "message": "Chapter not found"}
 
@@ -40,6 +45,7 @@ def delete_chapter(chapter_id):
 
         db.session.delete(chapter)
         db.session.commit()
+        cache.delete_memoized(get_chapters_by_subject, sub_id)
         return {"success": True, "message": "Chapter deleted successfully"}
     except Exception as e:
         db.session.rollback()
