@@ -1,7 +1,7 @@
 <template>
   <div class="admin-summary-dashboard">
     <div class="container">
-      <h1 class="dashboard-title">Admin Dashboard</h1>
+      <h1 class="dashboard-title">Analytics</h1>
       
       <div v-if="loading" class="loading-state">
         <p>Loading analytics...</p>
