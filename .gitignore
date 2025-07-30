@@ -71,3 +71,6 @@ backend/app/static/exports
 
 celerybeat-schedule
 celerybeat.pid
+
+
+*.zip
