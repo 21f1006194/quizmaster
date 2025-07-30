@@ -2,6 +2,16 @@
 
 This is part of the Modern Application Development II project at IITM BS degree in Datascience. It is a multi-user app (one requires an administrator and other users) that acts as an exam preparation site for multiple courses.
 
+## How to Run
+
+1. Clone the repository or download the zip file & extract it.
+2. Run `docker-compose up --build`
+3. Open `http://localhost:5173` in your browser
+4. Login with the admin credentials:
+    - Username: admin
+    - Password: admin123
+5. To get dummy data run `docker-compose exec backend python scripts/seed_data.py`
+
 ## Roles
 
 1. **Admin**
