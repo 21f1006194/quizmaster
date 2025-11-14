@@ -1,16 +1,153 @@
-# Quiz Master 
+# Quiz Master
 
-This is part of the Modern Application Development II project at IITM BS degree in Datascience. It is a multi-user app (one requires an administrator and other users) that acts as an exam preparation site for multiple courses.
+## About This Project
+
+This project was developed as part of **Modern Application Development II (MAD-II)** coursework in the **IIT Madras BS Degree Program in Data Science and Applications**. It demonstrates a full-stack web application with authentication, role-based access control, background jobs, caching, and scheduled tasks.
+
+Quiz Master is a multi-user quiz preparation platform that allows an administrator to create subjects, chapters, and quizzes, while users can participate in quizzes and track their performance over time.
+
+![Quiz Master Landing Page](Screenshot.png)
 
 ## How to Run
 
-1. Clone the repository or download the zip file & extract it.
-2. Run `docker-compose up --build`
-3. Open `http://localhost:5173` in your browser
-4. Login with the admin credentials:
-    - Username: admin
-    - Password: admin123
-5. To get dummy data run `docker-compose exec backend python scripts/seed_data.py`
+### Prerequisites
+- Docker and Docker Compose installed on your system
+
+### Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd quizmaster
+   ```
+
+2. **Build and start the application**
+   ```bash
+   docker-compose up --build
+   ```
+   This will start all services (backend, frontend, database, Redis, Celery workers, and Celery Beat scheduler)
+
+3. **Access the application**
+   - Open your browser and navigate to **`http://localhost:5173`**
+
+4. **Login with admin credentials**
+   - Username: `admin`
+   - Password: `admin123`
+
+5. **Seed dummy data (recommended for testing)**
+   ```bash
+   docker-compose exec backend python scripts/seed_data.py
+   ```
+   This populates the database with sample subjects, chapters, quizzes, questions, and user data.
+
+## Architecture Overview
+
+```mermaid
+graph TB
+    subgraph "Frontend - Vue.js"
+        A[Vue 3 SPA]
+        A1[User Dashboard]
+        A2[Admin Dashboard]
+        A3[Quiz Interface]
+    end
+
+    subgraph "Backend - Flask"
+        B[Flask API Server]
+        B1[Authentication & JWT]
+        B2[RESTful APIs]
+        B3[Role-Based Access Control]
+    end
+
+    subgraph "Database Layer"
+        C[(SQLite/PostgreSQL)]
+    end
+
+    subgraph "Caching Layer"
+        D[Redis Cache]
+    end
+
+    subgraph "Background Jobs"
+        E[Celery Workers]
+        E1[Daily Reminders]
+        E2[Monthly Reports]
+        E3[CSV Exports]
+    end
+
+    subgraph "Task Queue"
+        F[Redis Message Broker]
+    end
+
+    subgraph "Scheduled Tasks"
+        G[Celery Beat]
+    end
+
+    A --> B
+    A1 --> B2
+    A2 --> B2
+    A3 --> B2
+    B --> B1
+    B --> B2
+    B --> B3
+    B2 --> C
+    B2 --> D
+    B --> F
+    F --> E
+    G --> E
+    E --> C
+    E1 -.Email/SMS.-> Users
+    E2 -.Email.-> Users
+    E3 -.Export Files.-> Users
+
+    style A fill:#42b983
+    style B fill:#ff6b6b
+    style C fill:#4ecdc4
+    style D fill:#ffe66d
+    style E fill:#a8dadc
+    style F fill:#ffe66d
+    style G fill:#a8dadc
+```
+
+## Database Schema
+
+The application uses a relational database with the following schema:
+
+![Database ER Diagram](er.png)
+
+### Key Entities:
+- **User**: Stores user information with role-based access (is_admin flag)
+- **Subject**: Top-level course categories
+- **Chapter**: Subdivisions within subjects
+- **Quiz**: Timed assessments linked to chapters
+- **Question**: MCQ questions belonging to quizzes
+- **Option**: Answer choices for questions
+- **Quiz_Attempt**: Tracks user quiz sessions
+- **User_Response**: Records individual question answers
+
+## What's Implemented
+
+### Core Features
+- ✅ **User Authentication & Authorization** - JWT token-based authentication with role-based access control
+- ✅ **Admin Dashboard** - Complete CRUD operations for subjects, chapters, quizzes, and questions
+- ✅ **User Dashboard** - Quiz participation, performance tracking, and analytics
+- ✅ **Timed Quizzes** - Real-time countdown timer with auto-submission
+- ✅ **Performance Analytics** - Visual charts and statistics for both users and admins
+- ✅ **Search Functionality** - Search across users, subjects, and quizzes
+
+### Background Jobs & Automation
+- ✅ **Daily Reminders** - Celery Beat scheduled job to notify inactive users via email
+- ✅ **Monthly Activity Reports** - Automated HTML email reports with quiz statistics
+- ✅ **CSV Export** - Asynchronous export of user quiz data and admin analytics
+- ✅ **Redis Caching** - Performance optimization for frequently accessed data
+
+### Technology Stack
+- **Frontend**: Vue 3, Vue Router, Pinia (State Management), Chart.js, Axios
+- **Backend**: Flask, Flask-JWT-Extended, Flask-CORS, SQLAlchemy ORM
+- **Database**: SQLite (development) / PostgreSQL (production-ready)
+- **Task Queue**: Celery with Redis as message broker
+- **Scheduler**: Celery Beat for periodic tasks
+- **Caching**: Redis
+- **Email**: SMTP integration for notifications
+- **Containerization**: Docker & Docker Compose
 
 ## Roles
 
